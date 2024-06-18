@@ -30,7 +30,7 @@
     <string name="custom_wallpaper">Custom wallpaper</string>
     <string name="wifi_password">Password</string>
 
-    <string name="language_panel_text">Choose a language</string>
+    <string name="language_panel_text">Choose language</string>
     <string name="skip_button_text">Skip</string>
     <string name="date_and_time">Select time zone</string>
     <string name="sim_network_title_text">Sim network</string>
