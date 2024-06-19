@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.android.provision"
+        minSdkVersion 28
+        targetSdkVersion 30
+        versionCode 31
+        versionName "1.0.31"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def assembledTask = tasks.getByName("assemble${variant.name.capitalize()}")
+
+            assembledTask.doLast {
+                def buildDir = output.outputFile.parent
+                def unsignedApk = output.outputFile
+                def signedApk = new File(buildDir, "Provision.apk")
+                exec {
+                    commandLine 'java', '-Djava.library.path=.', '-jar', 'signapk.jar', 'platform.x509.pem', 'platform.pk8', unsignedApk, signedApk
+                }
+                copy {
+                    from signedApk
+                    into buildDir
+                    rename { "app-debug.apk" }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    compileOnly files('libs/settingslib.jar')
+    compileOnly files('libs/framework.jar')
+
+}
