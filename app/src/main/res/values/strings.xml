@@ -39,5 +39,15 @@
     <string name="connect_text">Connect</string>
     <string name="wifi_loading_text">Loading...</string>
     <string name="finish">Finish!</string>
+    <string name="locale_remove_menu">Remove</string>
 
+    <string name="locale_not_translated">May not be available in some apps</string>
+    <string name="add_a_language">add a language</string>
+    <string name="dlg_remove_locales_error_title">Can’t remove all languages</string>
+    <string name="dlg_remove_locales_error_message">Keep at least one preferred language</string>
+    <string name="dlg_remove_locales_message">Text will be displayed in another language.</string>
+    <plurals name="dlg_remove_locales_title">
+        <item quantity="one">Remove selected language?</item>
+        <item quantity="other">Remove selected languages?</item>
+    </plurals>
 </resources>

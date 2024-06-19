@@ -39,3 +39,10 @@ android {
         }
     }
 }
+
+dependencies {
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    compileOnly files('libs/settingslib.jar')
+    compileOnly files('libs/framework.jar')
+
+}

@@ -13,7 +13,6 @@ public class DefaultActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate():  savedInstanceState :" + savedInstanceState + "");
         Intent intent = new Intent("com.fde.SYSTEM_INIT_ACTION");
         intent.setPackage("com.boringdroid.systemui");
         sendBroadcast(intent);
@@ -22,13 +21,6 @@ public class DefaultActivity extends Activity {
         Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
         startActivity(new Intent(this, LanguageActivity.class));
         finish();
-//        Intent intent = new Intent();
-//        intent.setAction("com.fde.oobe.CHOOSE_LANGUAGE");
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        if (Utility.isIntentExist(this, intent)){goNext
-//            startActivity(intent);
-//        }
-
 
         // remove this activity from the package manager.
         // PackageManager pm = getPackageManager();

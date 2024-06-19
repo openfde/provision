@@ -53,6 +53,8 @@
                 android:layout_alignTop="@id/direction2"
                 android:background="@color/direction_color"
                 android:orientation="horizontal" />
+
+
         </RelativeLayout>
 
         <LinearLayout
@@ -93,4 +95,11 @@
            android:elevation="@dimen/next_button_elevation"
            android:onClick="goNext" />
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="131dp"
+        android:layout_width="500dp"
+        android:layout_height="500dp"/>
 </RelativeLayout>
