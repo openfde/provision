@@ -74,6 +74,15 @@
 
     </LinearLayout>
 
+
+
+    <FrameLayout
+        android:id="@+id/content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="131dp"
+        android:layout_width="500dp"
+        android:layout_height="500dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,24 +91,17 @@
         android:orientation="horizontal"
         android:gravity="center_horizontal" >
 
-       <Button
-           android:id="@+id/nextBtn"
-           android:layout_width="@dimen/next_button_width"
-           android:layout_height="@dimen/next_button_height"
-           android:layout_gravity="center_horizontal"
-           android:background="@drawable/next_button"
-           android:textAllCaps="false"
-           android:textColor="@color/white"
-           android:text="@string/next_button_text"
-           android:textSize="@dimen/next_button_text_size"
-           android:elevation="@dimen/next_button_elevation"
-           android:onClick="goNext" />
+        <Button
+            android:id="@+id/nextBtn"
+            android:layout_width="@dimen/next_button_width"
+            android:layout_height="@dimen/next_button_height"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/next_button"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:text="@string/next_button_text"
+            android:textSize="@dimen/next_button_text_size"
+            android:elevation="@dimen/next_button_elevation"
+            />
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="131dp"
-        android:layout_width="500dp"
-        android:layout_height="500dp"/>
 </RelativeLayout>

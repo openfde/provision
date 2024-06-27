@@ -5,8 +5,10 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
 
 import com.android.internal.app.LocalePickerWithRegion;
 import com.android.internal.app.LocaleStore;
@@ -17,8 +19,10 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
     private static final String TAG = "LanguageActivity";
     public static final String ADD_LOCALE = "addLocale";
-    private Fragment localeListEditor, localeListAdd;
-    private String LOCALE_LIST_EDITOR = "localeListEditor", LOCALE_LIST_ADD = "localeListAdd";
+    private Fragment localeListEditor, localeListAdd, virtualKeyboard;
+
+    private String LOCALE_LIST_EDITOR = "localeListEditor", LOCALE_LIST_ADD = "localeListAdd"
+            ,VIRTUAL_KEYBOARD = "virtualKeyboard";
     private LanguageListener languageListener = new LanguageListener() {
         @Override
         public void languageChanged(Locale locale) {
@@ -36,7 +40,18 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_language);
+        findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goNext();
+            }
+        });
         gotoEditFragment(null);
+
+    }
+
+    private void goNext() {
+        gotoVirtualKeyboard();
     }
 
     private void gotoEditFragment(LocaleStore.LocaleInfo localeInfo) {
@@ -68,6 +83,21 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, localeListAdd, LOCALE_LIST_ADD)
+                .addToBackStack(LOCALE_LIST_EDITOR)
+                .commit();
+    }
+
+    private void gotoVirtualKeyboard() {
+        if(getFragmentManager().findFragmentByTag(VIRTUAL_KEYBOARD) != null){
+
+        } else if(virtualKeyboard == null){
+            Log.d(TAG, "gotoVirtualKeyboard");
+            virtualKeyboard = new VirtualKeyboardFragment(languageListener);
+        }
+        getFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.content, virtualKeyboard, VIRTUAL_KEYBOARD)
                 .addToBackStack(LOCALE_LIST_EDITOR)
                 .commit();
     }

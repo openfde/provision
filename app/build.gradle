@@ -40,9 +40,22 @@ android {
     }
 }
 
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        Set<File> fileSet = options.bootstrapClasspath.getFiles()
+        List<File> newFileList =  new ArrayList<>();
+        newFileList.add(new File("libs/framework.jar"))
+        newFileList.add(new File("libs/settingslib.jar"))
+        newFileList.addAll(fileSet)
+        options.bootstrapClasspath = files(
+                newFileList.toArray()
+        )
+    }
+}
+
 dependencies {
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    compileOnly files('libs/settingslib.jar')
+//    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation files('libs/settingslib.jar')
     compileOnly files('libs/framework.jar')
 
 }

@@ -12,14 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.internal.app.LocalePicker;
 import com.android.internal.app.LocaleStore;
+import com.android.internal.widget.LinearLayoutManager;
+import com.android.internal.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +44,7 @@ public class LocaleListEditFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: savedInstanceState:" + savedInstanceState + "");
         LocaleStore.fillCache(getContext());
@@ -64,9 +62,8 @@ public class LocaleListEditFragment extends Fragment {
         return result;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View myLayout = inflater.inflate(R.layout.locale_order_list, container, false);
         configureDragAndDrop(myLayout);
         Bundle arguments = getArguments();
