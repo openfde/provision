@@ -31,6 +31,7 @@ public class LocaleListEditFragment extends Fragment {
     private LanguageActivity.LanguageListener languageListener;
     private View mAddLanguage, mRemoveModeView, mRemoveLanguageView;
     private final String TAG = "LocaleListEditFragment";
+    private final int PADDING = 94;
 
     private boolean mRemoveMode;
     private boolean mShowingRemoveDialog;
@@ -64,12 +65,24 @@ public class LocaleListEditFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        languageListener.showAndHideButton(View.VISIBLE);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getView().setPadding(0, 0, 0, PADDING);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View myLayout = inflater.inflate(R.layout.locale_order_list, container, false);
         configureDragAndDrop(myLayout);
         Bundle arguments = getArguments();
         if (arguments != null) {
-            LocaleStore.LocaleInfo  localeInfo = (LocaleStore.LocaleInfo)arguments.get(ADD_LOCALE);
+            LocaleStore.LocaleInfo localeInfo = (LocaleStore.LocaleInfo) arguments.get(ADD_LOCALE);
             Log.d(TAG, "onCreateView add localeInfo: " + localeInfo);
             mAdapter.addLocale(localeInfo);
         }
@@ -109,22 +122,16 @@ public class LocaleListEditFragment extends Fragment {
                 }
                 if (checkedCount == mAdapter.getItemCount()) {
                     mShowingRemoveDialog = true;
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(R.string.dlg_remove_locales_error_title)
-                            .setMessage(R.string.dlg_remove_locales_error_message)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            })
-                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    mShowingRemoveDialog = false;
-                                }
-                            })
-                            .create()
-                            .show();
+                    new AlertDialog.Builder(getActivity()).setTitle(R.string.dlg_remove_locales_error_title).setMessage(R.string.dlg_remove_locales_error_message).setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            mShowingRemoveDialog = false;
+                        }
+                    }).create().show();
                     return;
                 }
                 mShowingRemoveDialog = true;
@@ -132,33 +139,26 @@ public class LocaleListEditFragment extends Fragment {
                 if (mAdapter.isFirstLocaleChecked()) {
                     builder.setMessage(R.string.dlg_remove_locales_message);
                 }
-                final String title = getResources().getQuantityString(R.plurals.dlg_remove_locales_title,
-                        checkedCount);
-                builder.setTitle(title)
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                setRemoveMode(false);
-                            }
-                        })
-                        .setPositiveButton(R.string.locale_remove_menu,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mRemoveMode = false;
-                                        mShowingRemoveDialog = false;
-                                        mAdapter.removeChecked();
-                                        setRemoveMode(false);
-                                    }
-                                })
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                mShowingRemoveDialog = false;
-                            }
-                        })
-                        .create()
-                        .show();
+                final String title = getResources().getQuantityString(R.plurals.dlg_remove_locales_title, checkedCount);
+                builder.setTitle(title).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setRemoveMode(false);
+                    }
+                }).setPositiveButton(R.string.locale_remove_menu, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mRemoveMode = false;
+                        mShowingRemoveDialog = false;
+                        mAdapter.removeChecked();
+                        setRemoveMode(false);
+                    }
+                }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        mShowingRemoveDialog = false;
+                    }
+                }).create().show();
             }
         });
     }
@@ -170,6 +170,17 @@ public class LocaleListEditFragment extends Fragment {
         mAddLanguage.setVisibility(mRemoveMode ? View.INVISIBLE : View.VISIBLE);
         mRemoveModeView.setVisibility(mRemoveMode ? View.INVISIBLE : View.VISIBLE);
         mRemoveLanguageView.setVisibility(mRemoveMode ? View.VISIBLE : View.INVISIBLE);
+        languageListener.showAndHideButton(mRemoveMode ? View.INVISIBLE : View.VISIBLE);
+//        Set padding for the root view
+        getView().setPadding(0, 0, 0, mRemoveMode ? 0 : PADDING);
     }
 
+    private void setPadding(int left, int top, int right, int bottom) {// Set padding in dp for the root view
+        float density = getResources().getDisplayMetrics().density;
+        int paddingLeft = Math.round(left * density); // in pixels
+        int paddingTop = Math.round(top * density);  // in pixels
+        int paddingRight = Math.round(right * density); // in pixels
+        int paddingBottom = Math.round(bottom * density); // in pixels
+        getView().setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+    }
 }

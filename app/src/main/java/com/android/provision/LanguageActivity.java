@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
+import android.widget.TextView;
 
 import com.android.internal.app.LocalePickerWithRegion;
 import com.android.internal.app.LocaleStore;
@@ -18,13 +18,15 @@ import com.android.internal.app.LocaleStore;
 import java.util.Locale;
 
 public class LanguageActivity extends Activity implements LocalePickerWithRegion.LocaleSelectedListener {
-
+    private static final int SELECT_LANGUAGE = 1;
+    private static final int SELECT_KEYBOARD = 2;
+    private static final int THIRD = 3;
+    private static int state = SELECT_LANGUAGE;
     private static final String TAG = "LanguageActivity";
     public static final String ADD_LOCALE = "addLocale";
     private Fragment localeListEditor, localeListAdd, virtualKeyboard;
 
-    private String LOCALE_LIST_EDITOR = "localeListEditor", LOCALE_LIST_ADD = "localeListAdd"
-            ,VIRTUAL_KEYBOARD = "virtualKeyboard";
+    private String LOCALE_LIST_EDITOR = "localeListEditor", LOCALE_LIST_ADD = "localeListAdd", VIRTUAL_KEYBOARD = "virtualKeyboard";
     private LanguageListener languageListener = new LanguageListener() {
         @Override
         public void languageChanged(Locale locale) {
@@ -34,13 +36,17 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         public void addLanguage() {
             gotoAddFragment();
         }
+
+        public void showAndHideButton(int visibility) {
+            findViewById(R.id.nextBtn).setVisibility(visibility);
+        }
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_language);
 
         //todo remove this after testing first run
@@ -66,8 +72,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                 goNext();
             }
         });
-        gotoEditFragment(null);
-
+        Listen();
+        gotoFragment();
+//        gotoEditFragment(null);
     }
 
     private void goNext() {
@@ -75,11 +82,11 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     }
 
     private void gotoEditFragment(LocaleStore.LocaleInfo localeInfo) {
-        if(getFragmentManager().findFragmentByTag(LOCALE_LIST_EDITOR) != null && localeInfo != null){
+        if (getFragmentManager().findFragmentByTag(LOCALE_LIST_EDITOR) != null && localeInfo != null) {
             Bundle bundle = new Bundle();
             bundle.putSerializable(ADD_LOCALE, localeInfo);
             localeListEditor.setArguments(bundle);
-        } else if(localeListEditor == null){
+        } else if (localeListEditor == null) {
             localeListEditor = new LocaleListEditFragment(languageListener);
         }
         Log.d(TAG, "gotoEditFragment");
@@ -92,9 +99,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     }
 
     private void gotoAddFragment() {
-        if(getFragmentManager().findFragmentByTag(LOCALE_LIST_ADD) != null){
-
-        } else if(localeListAdd == null){
+        findViewById(R.id.nextBtn).setVisibility(View.INVISIBLE);
+        if (getFragmentManager().findFragmentByTag(LOCALE_LIST_ADD) != null) {
+        } else if (localeListAdd == null) {
             Log.d(TAG, "gotoAddFragment");
             localeListAdd = LocalePickerWithRegion.createLanguagePicker(
                     this, this, false /* translate only */);
@@ -108,20 +115,20 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     }
 
     private void gotoVirtualKeyboard() {
-        if(getFragmentManager().findFragmentByTag(VIRTUAL_KEYBOARD) != null){
-
-        } else if(virtualKeyboard == null){
+//        TextView tv = findViewById(R.id.language_title);
+        if (getFragmentManager().findFragmentByTag(VIRTUAL_KEYBOARD) != null) {
+        } else if (virtualKeyboard == null) {
             Log.d(TAG, "gotoVirtualKeyboard");
             virtualKeyboard = new VirtualKeyboardFragment(languageListener);
         }
         getFragmentManager()
                 .beginTransaction()
+                .setCustomAnimations(R.animator.slide_right_in, R.animator.slide_left_out, R.animator.slide_left_in, R.animator.slide_right_out)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, virtualKeyboard, VIRTUAL_KEYBOARD)
                 .addToBackStack(LOCALE_LIST_EDITOR)
                 .commit();
     }
-
 
     @Override
     public void onLocaleSelected(LocaleStore.LocaleInfo localeInfo) {
@@ -129,11 +136,73 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         gotoEditFragment(localeInfo);
     }
 
+    public void Listen() {
+        findViewById(R.id.direction1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                state = 1;
+                gotoFragment();
+            }
+        });
+
+        findViewById(R.id.direction2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                state = 2;
+                gotoFragment();
+            }
+        });
+
+        findViewById(R.id.direction3).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                state = 3;
+                gotoFragment();
+            }
+        });
+
+        findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                state++;
+                gotoFragment();
+            }
+        });
+    }
+
+    public void gotoFragment() {
+        setDirectionColor();
+        switch (state) {
+            case 1:
+                gotoEditFragment(null);
+                break;
+            case 2:
+                gotoVirtualKeyboard();
+                break;
+            case 3:
+                gotoEditFragment(null);
+                break;
+        }
+    }
+
+    public void setDirectionColor() {
+        findViewById(R.id.direction1).setBackgroundResource(R.color.direction_color);
+        findViewById(R.id.direction2).setBackgroundResource(R.color.direction_color);
+        findViewById(R.id.direction3).setBackgroundResource(R.color.direction_color);
+        if (state >= SELECT_LANGUAGE)
+            findViewById(R.id.direction1).setBackgroundResource(R.color.direction_marked_color);
+        if (state >= SELECT_KEYBOARD)
+            findViewById(R.id.direction2).setBackgroundResource(R.color.direction_marked_color);
+        if (state >= THIRD)
+            findViewById(R.id.direction3).setBackgroundResource(R.color.direction_marked_color);
+    }
 
     public interface LanguageListener {
 
         void languageChanged(Locale locale);
 
         void addLanguage();
+
+        void showAndHideButton(int visibility);
     }
 }

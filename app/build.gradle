@@ -19,6 +19,18 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.debug
+        }
+        debug {
+            applicationIdSuffix '.debug'
+            minifyEnabled false
+        }
+    }
+
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
             def assembledTask = tasks.getByName("assemble${variant.name.capitalize()}")

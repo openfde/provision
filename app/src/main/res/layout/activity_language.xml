@@ -2,19 +2,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white" >
+    android:background="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/panel"
             android:layout_width="match_parent"
             android:layout_height="@dimen/panel_height"
             android:background="@color/panel_background_color"
-            android:paddingStart="@dimen/panel_title_padding" >
+            android:paddingStart="@dimen/panel_title_padding">
 
             <TextView
                 android:id="@+id/language_title"
@@ -22,8 +22,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:text="@string/language_panel_text"
-                android:textSize="@dimen/panel_title_size"
-                android:textColor="@color/panel_title_color" />
+                android:textColor="@color/panel_title_color"
+                android:textSize="@dimen/panel_title_size" />
 
             <LinearLayout
                 android:id="@+id/direction1"
@@ -38,9 +38,9 @@
                 android:id="@+id/direction2"
                 android:layout_width="@dimen/direction_width"
                 android:layout_height="@dimen/direction_height"
-                android:layout_toRightOf="@id/direction1"
-                android:layout_marginLeft="@dimen/direction_marginleft"
                 android:layout_alignTop="@id/direction1"
+                android:layout_marginLeft="@dimen/direction_marginleft"
+                android:layout_toRightOf="@id/direction1"
                 android:background="@color/direction_color"
                 android:orientation="horizontal" />
 
@@ -48,19 +48,18 @@
                 android:id="@+id/direction3"
                 android:layout_width="@dimen/direction_width"
                 android:layout_height="@dimen/direction_height"
-                android:layout_toRightOf="@id/direction2"
-                android:layout_marginLeft="@dimen/direction_marginleft"
                 android:layout_alignTop="@id/direction2"
+                android:layout_marginLeft="@dimen/direction_marginleft"
+                android:layout_toRightOf="@id/direction2"
                 android:background="@color/direction_color"
                 android:orientation="horizontal" />
-
 
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/language_list_height"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <ListView
                 android:id="@+id/language_lv"
@@ -68,28 +67,27 @@
                 android:layout_height="wrap_content"
                 android:divider="#eeeeee"
                 android:dividerHeight="1dp"
-                android:scrollbars="none" >
-            </ListView>
+                android:scrollbars="none"/>
         </LinearLayout>
 
     </LinearLayout>
 
-
+    <!--460dp-->
 
     <FrameLayout
         android:id="@+id/content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="131dp"
         android:layout_width="500dp"
-        android:layout_height="500dp"/>
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="131dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:paddingBottom="@dimen/next_button_padding_bottom"
+        android:gravity="center"
         android:orientation="horizontal"
-        android:gravity="center_horizontal" >
+        android:paddingBottom="25dp">
 
         <Button
             android:id="@+id/nextBtn"
@@ -97,11 +95,10 @@
             android:layout_height="@dimen/next_button_height"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/next_button"
+            android:elevation="@dimen/next_button_elevation"
+            android:text="@string/next_button_text"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:text="@string/next_button_text"
-            android:textSize="@dimen/next_button_text_size"
-            android:elevation="@dimen/next_button_elevation"
-            />
+            android:textSize="@dimen/next_button_text_size" />
     </LinearLayout>
 </RelativeLayout>

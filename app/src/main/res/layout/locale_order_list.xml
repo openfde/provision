@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2016 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2016 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,10 +15,9 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/scroll_view"
-    >
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,25 +28,25 @@
             android:id="@+id/dragList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical" />
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="?android:listPreferredItemHeight"
-            android:background="?android:colorBackground"
-            >
+            android:background="?android:colorBackground">
+
             <TextView
                 android:id="@+id/add_language"
                 android:layout_width="wrap_content"
                 android:layout_height="?android:listPreferredItemHeight"
-                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:drawableStart="@drawable/ic_add_24dp"
                 android:drawablePadding="32dp"
-                android:textAlignment="textStart"
                 android:gravity="center_vertical"
+                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:text="@string/add_a_language"
+                android:textAlignment="textStart"
                 android:textAppearance="?android:attr/textAppearanceListItem"
                 tools:ignore="RtlCompat" />
 
@@ -56,13 +54,13 @@
                 android:id="@+id/remove_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="?android:listPreferredItemHeight"
-                android:text="@string/locale_remove_menu"
                 android:layout_alignParentRight="true"
-                android:textAppearance="?android:attr/textAppearanceListItem"
                 android:layout_centerVertical="true"
-                android:gravity="center_vertical"
                 android:layout_marginRight="30dp"
-                />
+                android:gravity="center_vertical"
+                android:text="@string/locale_remove_menu"
+                android:textAppearance="?android:attr/textAppearanceListItem" />
+
             <ImageView
                 android:id="@+id/remove_language"
                 android:layout_width="wrap_content"
@@ -71,8 +69,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="25dp"
                 android:src="@drawable/ic_delete"
-                android:visibility="gone"
-                />
+                android:visibility="gone" />
 
         </RelativeLayout>
     </LinearLayout>
