@@ -14,10 +14,11 @@ import android.view.ViewGroup;
 
 import android.app.Fragment;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.internal.app.LocalePicker;
 import com.android.internal.app.LocaleStore;
-import com.android.internal.widget.LinearLayoutManager;
-import com.android.internal.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;

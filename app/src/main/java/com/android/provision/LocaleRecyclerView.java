@@ -20,7 +20,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.android.internal.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 class LocaleRecyclerView extends RecyclerView {

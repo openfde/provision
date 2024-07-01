@@ -3,7 +3,9 @@ package com.android.provision;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -40,6 +42,24 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN , WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_language);
+
+        //todo remove this after testing first run
+
+        //      Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
+//        Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
+        // remove this activity from the package manager.
+        // PackageManager pm = getPackageManager();
+        // ComponentName name = new ComponentName(this, DefaultActivity.class);
+        // pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+        //         PackageManager.DONT_KILL_APP);
+
+
+        Intent intent = new Intent("com.fde.SYSTEM_INIT_ACTION");
+        intent.setPackage("com.boringdroid.systemui");
+        sendBroadcast(intent);
+        Settings.Global.putString(getContentResolver(), Settings.Global.DEVICE_NAME, "OpenFDE device");
+
+
         findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

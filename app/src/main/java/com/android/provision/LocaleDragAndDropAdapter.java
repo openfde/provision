@@ -28,10 +28,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.internal.app.LocalePicker;
 import com.android.internal.app.LocaleStore;
-import com.android.internal.widget.RecyclerView;
-import com.android.internal.widget.helper.ItemTouchHelper;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

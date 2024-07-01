@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.TextView;
 
 public class DefaultActivity extends Activity {
 
@@ -13,12 +14,13 @@ public class DefaultActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(new TextView(this));
         Intent intent = new Intent("com.fde.SYSTEM_INIT_ACTION");
         intent.setPackage("com.boringdroid.systemui");
         sendBroadcast(intent);
         Settings.Global.putString(getContentResolver(), Settings.Global.DEVICE_NAME, "OpenFDE device");
-        Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
-        Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
+//        Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
+//        Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
         startActivity(new Intent(this, LanguageActivity.class));
         finish();
 
