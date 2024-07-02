@@ -7,9 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.internal.app.LocalePickerWithRegion;
@@ -24,6 +27,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     private static int state = SELECT_LANGUAGE;
     private static final String TAG = "LanguageActivity";
     public static final String ADD_LOCALE = "addLocale";
+    private TextView mLanguageTitle;
+    private Button mPrevBtn;
+    private Button mNextBtn;
     private Fragment localeListEditor, localeListAdd, virtualKeyboard;
 
     private String LOCALE_LIST_EDITOR = "localeListEditor", LOCALE_LIST_ADD = "localeListAdd", VIRTUAL_KEYBOARD = "virtualKeyboard";
@@ -51,8 +57,8 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
         //todo remove this after testing first run
 
-        //      Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
-//        Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
+        //Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
+        //Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
         // remove this activity from the package manager.
         // PackageManager pm = getPackageManager();
         // ComponentName name = new ComponentName(this, DefaultActivity.class);
@@ -66,20 +72,23 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         Settings.Global.putString(getContentResolver(), Settings.Global.DEVICE_NAME, "OpenFDE device");
 
 
-        findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goNext();
-            }
-        });
-        Listen();
+//        findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                goNext();
+//            }
+//        });
+        mLanguageTitle = findViewById(R.id.language_title);
+        mPrevBtn = findViewById(R.id.prevBtn);
+        mNextBtn = findViewById(R.id.nextBtn);
+        switchListen();
         gotoFragment();
 //        gotoEditFragment(null);
     }
 
-    private void goNext() {
-        gotoVirtualKeyboard();
-    }
+//    private void goNext() {
+//        gotoVirtualKeyboard();
+//    }
 
     private void gotoEditFragment(LocaleStore.LocaleInfo localeInfo) {
         if (getFragmentManager().findFragmentByTag(LOCALE_LIST_EDITOR) != null && localeInfo != null) {
@@ -108,6 +117,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         }
         getFragmentManager()
                 .beginTransaction()
+                .setCustomAnimations(R.animator.slide_right_in, R.animator.slide_left_out, R.animator.slide_left_in, R.animator.slide_right_out)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, localeListAdd, LOCALE_LIST_ADD)
                 .addToBackStack(LOCALE_LIST_EDITOR)
@@ -115,7 +125,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     }
 
     private void gotoVirtualKeyboard() {
-//        TextView tv = findViewById(R.id.language_title);
+        mLanguageTitle.setText(R.string.keyboard_panel_text);
         if (getFragmentManager().findFragmentByTag(VIRTUAL_KEYBOARD) != null) {
         } else if (virtualKeyboard == null) {
             Log.d(TAG, "gotoVirtualKeyboard");
@@ -136,42 +146,32 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         gotoEditFragment(localeInfo);
     }
 
-    public void Listen() {
-        findViewById(R.id.direction1).setOnClickListener(new View.OnClickListener() {
+    public void switchListen() {
+        mPrevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                state = 1;
-                gotoFragment();
+                if (state <= 1) return;
+                state--;
+                getFragmentManager().popBackStack();
+                setView();
             }
         });
-
-        findViewById(R.id.direction2).setOnClickListener(new View.OnClickListener() {
+        mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                state = 2;
-                gotoFragment();
-            }
-        });
-
-        findViewById(R.id.direction3).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                state = 3;
-                gotoFragment();
-            }
-        });
-
-        findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                state++;
-                gotoFragment();
+                if (state >= 1 && state <= 2) {
+                    state++;
+                    gotoFragment();
+                    setView();
+                } else if (state == 3) {
+                    //OOBE END, GOTO
+                }
             }
         });
     }
 
     public void gotoFragment() {
-        setDirectionColor();
+        setView();
         switch (state) {
             case 1:
                 gotoEditFragment(null);
@@ -180,12 +180,12 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                 gotoVirtualKeyboard();
                 break;
             case 3:
-                gotoEditFragment(null);
                 break;
         }
     }
 
-    public void setDirectionColor() {
+    public void setView() {
+        // setDirectionColor
         findViewById(R.id.direction1).setBackgroundResource(R.color.direction_color);
         findViewById(R.id.direction2).setBackgroundResource(R.color.direction_color);
         findViewById(R.id.direction3).setBackgroundResource(R.color.direction_color);
@@ -195,6 +195,41 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             findViewById(R.id.direction2).setBackgroundResource(R.color.direction_marked_color);
         if (state >= THIRD)
             findViewById(R.id.direction3).setBackgroundResource(R.color.direction_marked_color);
+        // setPrevAndNextButton
+        ViewGroup.LayoutParams params = findViewById(R.id.nextBtn).getLayoutParams();
+        if (state == 1) {
+            params.width = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    326,
+                    this.getResources().getDisplayMetrics()
+            );
+            params.height = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    44,
+                    this.getResources().getDisplayMetrics()
+            );
+            mPrevBtn.setVisibility(View.GONE);
+        } else if (state >= 2) {
+            params.width = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    216,
+                    this.getResources().getDisplayMetrics()
+            );
+            params.height = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    44,
+                    this.getResources().getDisplayMetrics()
+            );
+            mPrevBtn.setVisibility(View.VISIBLE);
+        }
+        mNextBtn.setLayoutParams(params);
+        //setPanel
+        if (state == 1) {
+            mLanguageTitle.setText(R.string.language_panel_text);
+        } else if (state == 2) {
+            mLanguageTitle.setText(R.string.keyboard_panel_text);
+        } else if (state == 3) {
+        }
     }
 
     public interface LanguageListener {

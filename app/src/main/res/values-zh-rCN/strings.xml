@@ -15,6 +15,7 @@
     <string name="tip_text">Press anywhere to start.</string>
     <string name="start_setting">start setting</string>
     <string name="activating_success">Activating success</string>
+    <string name="prev_button_prev">上一步</string>
     <string name="next_button_text">"下一步"</string>
     <string name="setup_succeeded">Setup completion</string>
     <string name="finish_button_text">start to use</string>
@@ -50,4 +51,5 @@
         <item quantity="one">要移除所选语言吗？</item>
     </plurals>
     <string name="language_panel_text">选择语言</string>
+    <string name="keyboard_panel_text">选择键盘</string>
 </resources>
