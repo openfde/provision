@@ -163,7 +163,6 @@ public class LocaleListEditFragment extends Fragment {
         });
     }
 
-
     private void setRemoveMode(boolean mRemoveMode) {
         this.mRemoveMode = mRemoveMode;
         mAdapter.setRemoveMode(mRemoveMode);
@@ -171,16 +170,17 @@ public class LocaleListEditFragment extends Fragment {
         mRemoveModeView.setVisibility(mRemoveMode ? View.INVISIBLE : View.VISIBLE);
         mRemoveLanguageView.setVisibility(mRemoveMode ? View.VISIBLE : View.INVISIBLE);
         languageListener.showAndHideButton(mRemoveMode ? View.INVISIBLE : View.VISIBLE);
-//        Set padding for the root view
-        getView().setPadding(0, 0, 0, mRemoveMode ? 0 : PADDING);
+        // Set padding for the root view
+        setFragmentPadding(0, 0, 0, mRemoveMode ? 0 : PADDING);
     }
 
-    private void setPadding(int left, int top, int right, int bottom) {// Set padding in dp for the root view
+    private void setFragmentPadding(int left, int top, int right, int bottom) {
         float density = getResources().getDisplayMetrics().density;
-        int paddingLeft = Math.round(left * density); // in pixels
-        int paddingTop = Math.round(top * density);  // in pixels
-        int paddingRight = Math.round(right * density); // in pixels
-        int paddingBottom = Math.round(bottom * density); // in pixels
+        // in pixels
+        int paddingLeft = Math.round(left * density);
+        int paddingTop = Math.round(top * density);
+        int paddingRight = Math.round(right * density);
+        int paddingBottom = Math.round(bottom * density);
         getView().setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
     }
 }

@@ -17,6 +17,7 @@
     <string name="activating_success">Activating success</string>
     <string name="prev_button_prev">Prev</string>
     <string name="next_button_text">Next</string>
+    <string name="done_button_text">Done</string>
     <string name="setup_succeeded">Setup completion</string>
     <string name="finish_button_text">start to use</string>
     <string name="wifi_title_text">Select network</string>
@@ -33,6 +34,7 @@
 
     <string name="language_panel_text">Choose language</string>
     <string name="keyboard_panel_text">Choose keyboard</string>
+    <string name="application_panel_text">Choose application</string>
     <string name="skip_button_text">Skip</string>
     <string name="date_and_time">Select time zone</string>
     <string name="sim_network_title_text">Sim network</string>
@@ -43,6 +45,7 @@
     <string name="finish">Finish!</string>
     <string name="locale_remove_menu">Remove</string>
 
+    <string name="language_hint">Long press to drag and adjust the order</string>
     <string name="locale_not_translated">May not be available in some apps</string>
     <string name="add_a_language">add a language</string>
     <string name="dlg_remove_locales_error_title">Can’t remove all languages</string>

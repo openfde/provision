@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.admin.DevicePolicyManager;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -32,7 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @SuppressLint("ValidFragment")
-public class VirtualKeyboardFragment extends Fragment  {
+public class VirtualKeyboardFragment extends Fragment {
 
     private final ArrayList<InputMethodPreference> mInputMethodPreferenceList = new ArrayList<>();
     private InputMethodSettingValuesWrapper mInputMethodSettingValues;
@@ -70,9 +69,9 @@ public class VirtualKeyboardFragment extends Fragment  {
     }
 
     @Override
-    public View onCreateView( LayoutInflater inflater,  ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View myLayout = inflater.inflate(R.layout.layout_keyboard, container, false);
-        mRecyclerView = (RecyclerView) myLayout.findViewById(R.id.recycler_view);
+        mRecyclerView = (RecyclerView) myLayout.findViewById(R.id.keyboard_recycler_view);
         return myLayout;
     }
 
@@ -112,7 +111,7 @@ public class VirtualKeyboardFragment extends Fragment  {
                 holder.icon.setImageDrawable(drawable);
                 holder.title.setText(label);
                 holder.toggleSwitch.setChecked(enabledImi);
-                if(alwaysCheckedIme){
+                if (alwaysCheckedIme) {
                     holder.toggleSwitch.setEnabled(true);
                     holder.toggleSwitch.setEnabled(false);
                     holder.title.setTextColor(getResources().getColor(R.color.connected_state_color));
@@ -127,7 +126,7 @@ public class VirtualKeyboardFragment extends Fragment  {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!alwaysCheckedIme){
+                        if (!alwaysCheckedIme) {
                             boolean checked = holder.toggleSwitch.isChecked();
                             holder.toggleSwitch.setChecked(!checked);
                         }
@@ -147,16 +146,16 @@ public class VirtualKeyboardFragment extends Fragment  {
         String id = inputMethodInfo.getId();
         final HashMap<String, HashSet<String>> enabledIMEsAndSubtypesMap =
                 getEnabledInputMethodsAndSubtypeList(getContext().getContentResolver());
-        if(enabledIMEsAndSubtypesMap.containsKey(id) && !isChecked){
+        if (enabledIMEsAndSubtypesMap.containsKey(id) && !isChecked) {
             enabledIMEsAndSubtypesMap.remove(id);
-        } else if(isChecked && !enabledIMEsAndSubtypesMap.containsKey(id)){
+        } else if (isChecked && !enabledIMEsAndSubtypesMap.containsKey(id)) {
             enabledIMEsAndSubtypesMap.put(id, new HashSet<String>());
         }
         String textImiString = buildInputMethodsAndSubtypesString(enabledIMEsAndSubtypesMap);
         Settings.Secure.putString(getContext().getContentResolver(), Settings.Secure.ENABLED_INPUT_METHODS, textImiString);
     }
 
-    public static class InputMethodViewHolder extends RecyclerView.ViewHolder{
+    public static class InputMethodViewHolder extends RecyclerView.ViewHolder {
 
         ImageView icon;
         TextView title;

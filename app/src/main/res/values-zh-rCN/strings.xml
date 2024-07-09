@@ -17,6 +17,7 @@
     <string name="activating_success">Activating success</string>
     <string name="prev_button_prev">上一步</string>
     <string name="next_button_text">"下一步"</string>
+    <string name="done_button_text">完成</string>
     <string name="setup_succeeded">Setup completion</string>
     <string name="finish_button_text">start to use</string>
     <string name="wifi_title_text">Select network</string>
@@ -43,6 +44,7 @@
     <string name="locale_not_translated">May not be available in some apps</string>
     <string name="add_a_language">添加语言</string>
     <string name="locale_remove_menu">"移除"</string>
+    <string name="language_hint">长按可拖动调整顺序</string>
     <string name="dlg_remove_locales_error_title">"无法移除所有语言"</string>
     <string name="dlg_remove_locales_error_message">"请保留至少一种首选语言"</string>
     <string name="dlg_remove_locales_message">"系统将以其他语言显示文字。"</string>
@@ -52,4 +54,5 @@
     </plurals>
     <string name="language_panel_text">选择语言</string>
     <string name="keyboard_panel_text">选择键盘</string>
+    <string name="application_panel_text">选装应用</string>
 </resources>

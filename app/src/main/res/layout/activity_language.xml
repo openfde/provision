@@ -54,21 +54,16 @@
                 android:background="@color/direction_color"
                 android:orientation="horizontal" />
 
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/language_list_height"
-            android:orientation="vertical">
-
-            <ListView
-                android:id="@+id/language_lv"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/language_hint"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:divider="#eeeeee"
-                android:dividerHeight="1dp"
-                android:scrollbars="none" />
-        </LinearLayout>
+                android:layout_marginTop="110dp"
+                android:layout_centerHorizontal="true"
+                android:text="@string/language_hint"
+                android:textSize="12sp"
+                android:textColor="@color/language_hint_color" />
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -91,10 +86,11 @@
 
         <Button
             android:id="@+id/prevBtn"
-            android:layout_width="108dp"
+            android:layout_width="100dp"
             android:layout_height="44dp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/next_button"
+            android:background="@drawable/prev_button"
+            android:elevation="@dimen/prev_button_elevation"
             android:text="@string/prev_button_prev"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -103,10 +99,10 @@
 
         <Button
             android:id="@+id/nextBtn"
-            android:layout_width="162dp"
+            android:layout_width="300dp"
             android:layout_height="@dimen/next_button_height"
             android:layout_gravity="center_horizontal"
-            android:layout_marginStart="2dp"
+            android:layout_marginStart="1dp"
             android:background="@drawable/next_button"
             android:elevation="@dimen/next_button_elevation"
             android:text="@string/next_button_text"
