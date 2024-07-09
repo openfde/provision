@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Copyright (C) 2015 The Android Open Source Project
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -151,6 +150,7 @@
     <dimen name="next_button_text_size">18sp</dimen>
     <dimen name="next_button_width">324dp</dimen>
     <dimen name="next_button_height">44dp</dimen>
+    <dimen name="prev_button_elevation">0dp</dimen>
     <dimen name="next_button_elevation">0dp</dimen>
     <dimen name="next_button_padding_bottom">70dp</dimen>
 
@@ -258,5 +258,6 @@
 
     <!-- legal -->
     <dimen name="webview_height_land">135dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 
 </resources>

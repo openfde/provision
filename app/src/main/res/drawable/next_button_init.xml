@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false">
-            
         <shape xmlns:android="http://schemas.android.com/apk/res/android" android:useLevel="false">
             <!--填充色-->
             <solid android:color="@color/next_button_disable_color"/>
             <!--圆角-->
-            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
+            <corners android:radius="6dp"/>
         </shape>
 
     </item>
-    <item android:state_pressed="true">
 
+    <item android:state_pressed="true">
         <shape xmlns:android="http://schemas.android.com/apk/res/android" android:useLevel="false">
             <!--填充色-->
             <solid android:color="@color/next_button_pressed_color"/>
             <!--圆角-->
-            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
+            <corners android:radius="6dp"/>
         </shape>
-        
+
     </item>
 
     <item android:state_focused="true">
-            
         <shape xmlns:android="http://schemas.android.com/apk/res/android" android:useLevel="false">
             <!--填充色-->
             <solid android:color="@color/next_button_color"/>
             <!--圆角-->
-            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
+            <corners android:radius="6dp"/>
         </shape>
-        
+
     </item>
 
     <item android:state_hovered="true">
@@ -37,19 +35,19 @@
             <!--填充色-->
             <solid android:color="@color/next_button_hovered_color"/>
             <!--圆角-->
-            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
+            <corners android:radius="6dp"/>
         </shape>
     </item>
 
     <item>
-            
         <shape xmlns:android="http://schemas.android.com/apk/res/android" android:useLevel="false">
             <!--填充色-->
             <solid android:color="@color/next_button_color"/>
             <!--圆角-->
-            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
+            <corners android:radius="6dp"/>
         </shape>
 
     </item>
+
 
 </selector>
