@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
@@ -54,15 +53,35 @@
                 android:background="@color/direction_color"
                 android:orientation="horizontal" />
 
+            <LinearLayout
+                android:id="@+id/direction4"
+                android:layout_width="@dimen/direction_width"
+                android:layout_height="@dimen/direction_height"
+                android:layout_alignTop="@id/direction3"
+                android:layout_marginLeft="@dimen/direction_marginleft"
+                android:layout_toRightOf="@id/direction3"
+                android:background="@color/direction_color"
+                android:orientation="horizontal" />
+
+            <LinearLayout
+                android:id="@+id/direction5"
+                android:layout_width="@dimen/direction_width"
+                android:layout_height="@dimen/direction_height"
+                android:layout_alignTop="@id/direction4"
+                android:layout_marginLeft="@dimen/direction_marginleft"
+                android:layout_toRightOf="@id/direction4"
+                android:background="@color/direction_color"
+                android:orientation="horizontal" />
+
             <TextView
                 android:id="@+id/language_hint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="110dp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="110dp"
                 android:text="@string/language_hint"
-                android:textSize="12sp"
-                android:textColor="@color/language_hint_color" />
+                android:textColor="@color/language_hint_color"
+                android:textSize="12sp" />
         </RelativeLayout>
 
     </LinearLayout>
@@ -91,7 +110,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/prev_button"
             android:elevation="@dimen/prev_button_elevation"
-            android:text="@string/prev_button_prev"
+            android:text="@string/prev_button_text"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"
@@ -109,5 +128,20 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="@dimen/next_button_text_size" />
+
+        <Button
+            android:id="@+id/returnBtn"
+            android:layout_width="300dp"
+            android:layout_height="@dimen/next_button_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="1dp"
+            android:background="@drawable/return_button"
+            android:elevation="@dimen/next_button_elevation"
+            android:text="@string/return_button_text"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/next_button_text_size"
+            android:visibility="gone" />
+
     </LinearLayout>
 </RelativeLayout>

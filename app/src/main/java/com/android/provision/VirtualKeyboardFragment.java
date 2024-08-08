@@ -19,7 +19,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.android.internal.widget.LinearLayoutManager;
 import com.android.internal.widget.RecyclerView;
 import com.android.settingslib.inputmethod.InputMethodPreference;
@@ -114,6 +113,7 @@ public class VirtualKeyboardFragment extends Fragment {
                 if (alwaysCheckedIme) {
                     holder.toggleSwitch.setEnabled(true);
                     holder.toggleSwitch.setEnabled(false);
+                    holder.itemView.setClickable(false);
                     holder.title.setTextColor(getResources().getColor(R.color.connected_state_color));
                 } else {
                     holder.toggleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -122,16 +122,16 @@ public class VirtualKeyboardFragment extends Fragment {
                             updateInputMethodEnable(inputMethodInfo, isChecked);
                         }
                     });
-                }
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (!alwaysCheckedIme) {
-                            boolean checked = holder.toggleSwitch.isChecked();
-                            holder.toggleSwitch.setChecked(!checked);
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!alwaysCheckedIme) {
+                                boolean checked = holder.toggleSwitch.isChecked();
+                                holder.toggleSwitch.setChecked(!checked);
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
             }
 

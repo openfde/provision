@@ -1,42 +1,38 @@
 package com.android.provision;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PictureDrawable;
-import android.provider.SyncStateContract;
-import android.util.Base64;
-import android.util.Log;
 
-import com.caverock.androidsvg.SVG;
-import com.caverock.androidsvg.SVGParseException;
+import android.content.Context;
+
+import java.util.Locale;
 
 public class Utils {
-    public static final String SURFFIX_SVG = ".svg";
-    public static final String SURFFIX_SVGZ = ".svgz";
-    public static final String SURFFIX_PNG = ".png";
+    public static boolean isChineseLanguage(Context context) {
+        Locale locale = context.getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        return language.equals("zh");
+    }
 
-    public static Drawable getImage(String imageStr, String iconType, String name, Context context) {
-        Log.d("TAG", "getImage() called with: imageStr = [" + imageStr.length() + "], iconType = [" + iconType + "], name = [" + name + "]");
-        if (SURFFIX_SVG.equals(iconType) || SURFFIX_SVGZ.equals(iconType)) {
-            try {
-                byte[] decode = Base64.decode(imageStr, Base64.DEFAULT);
-                SVG svg = SVG.getFromString(new String(decode));
-                Drawable drawable = new PictureDrawable(svg.renderToPicture());
-                return drawable;
-            } catch (SVGParseException e) {
-                e.printStackTrace();
-            }
-        } else if (SURFFIX_PNG.equals(iconType)) {
-            byte[] decode = Base64.decode(imageStr, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decode, 0, decode.length);
-            if (bitmap != null) {
-                return new BitmapDrawable(bitmap);
-            }
+    public  static  int ToInt(Object ojb){
+        if(ojb == null){
+            return 0;
+        }else {
+            return  ToDouble(ojb).intValue();
         }
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
-        return new BitmapDrawable(bitmap);
+    }
+
+    public  static  Double ToDouble(Object ojb){
+        if(ojb == null){
+            return 0.0;
+        }else {
+            return  Double.valueOf(ToString(ojb));
+        }
+    }
+
+    public  static  String ToString(Object ojb){
+        if(ojb == null){
+            return "";
+        }else {
+            return  String.valueOf(ojb).trim();
+        }
     }
 }

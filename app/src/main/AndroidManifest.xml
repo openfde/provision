@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.android.provision"
     android:sharedUserId="android.uid.system">
-
     <!-- For miscellaneous settings -->
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.STATUS_BAR" />
@@ -31,11 +30,20 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
         tools:targetApi="31">
+<!--        <activity-->
+<!--            android:name=".test.TestActivity"-->
+<!--            android:excludeFromRecents="true"-->
+<!--            android:exported="true"-->
+<!--            android:immersive="true">-->
+
+
+
+<!--        </activity>-->
+
         <activity
             android:name=".LanguageActivity"
             android:excludeFromRecents="true"
@@ -51,19 +59,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.SETUP_WIZARD" />
             </intent-filter>
+
             <layout
-                android:defaultWidth="1000dp"
+                android:defaultWidth="500dp"
                 android:defaultHeight="800dp"
                 android:gravity="center" />
-        </activity>
-
-
-        <!-- Choose language -->
+        </activity> <!-- Choose language -->
         <activity
             android:name=".DefaultActivity"
-            android:exported="true"/>
-
-
+            android:exported="true" />
     </application>
 
 </manifest>

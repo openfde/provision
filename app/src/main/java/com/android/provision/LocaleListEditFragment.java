@@ -4,6 +4,7 @@ import static com.android.provision.LanguageActivity.ADD_LOCALE;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.LocaleList;
@@ -11,8 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.app.Fragment;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,7 +66,6 @@ public class LocaleListEditFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        languageListener.showAndHideButton(View.VISIBLE);
     }
 
     @Override
@@ -169,7 +167,8 @@ public class LocaleListEditFragment extends Fragment {
         mAddLanguage.setVisibility(mRemoveMode ? View.INVISIBLE : View.VISIBLE);
         mRemoveModeView.setVisibility(mRemoveMode ? View.INVISIBLE : View.VISIBLE);
         mRemoveLanguageView.setVisibility(mRemoveMode ? View.VISIBLE : View.INVISIBLE);
-        languageListener.showAndHideButton(mRemoveMode ? View.INVISIBLE : View.VISIBLE);
+        if (mRemoveMode) languageListener.showAndHideButton(View.GONE);
+        else languageListener.showAndHideNextButton(View.VISIBLE);
         // Set padding for the root view
         setFragmentPadding(0, 0, 0, mRemoveMode ? 0 : PADDING);
     }

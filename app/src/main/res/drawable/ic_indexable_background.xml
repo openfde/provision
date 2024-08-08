@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:useLevel="false">
+            <!--填充色-->
+            <solid android:color="@color/teal_200" />
+            <!--圆角-->
+            <corners android:radius="8dp" />
+
+            <padding android:top="1dp" />
+        </shape>
+
+    </item>
+
+</selector>
