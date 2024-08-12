@@ -3,94 +3,89 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/panel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="@dimen/panel_height"
+        android:background="@color/panel_background_color"
+        android:elevation="4dp"
+        android:paddingStart="@dimen/panel_title_padding">
 
-        <RelativeLayout
-            android:id="@+id/panel"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/panel_height"
-            android:background="@color/panel_background_color"
-            android:paddingStart="@dimen/panel_title_padding">
+        <TextView
+            android:id="@+id/language_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/language_panel_text"
+            android:textColor="@color/panel_title_color"
+            android:textSize="@dimen/panel_title_size" />
 
-            <TextView
-                android:id="@+id/language_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="@string/language_panel_text"
-                android:textColor="@color/panel_title_color"
-                android:textSize="@dimen/panel_title_size" />
+        <LinearLayout
+            android:id="@+id/direction1"
+            android:layout_width="@dimen/direction_width"
+            android:layout_height="@dimen/direction_height"
+            android:layout_below="@id/language_title"
+            android:layout_marginTop="@dimen/direction_margintop"
+            android:background="@color/direction_marked_color"
+            android:orientation="horizontal" />
 
-            <LinearLayout
-                android:id="@+id/direction1"
-                android:layout_width="@dimen/direction_width"
-                android:layout_height="@dimen/direction_height"
-                android:layout_below="@id/language_title"
-                android:layout_marginTop="@dimen/direction_margintop"
-                android:background="@color/direction_marked_color"
-                android:orientation="horizontal" />
+        <LinearLayout
+            android:id="@+id/direction2"
+            android:layout_width="@dimen/direction_width"
+            android:layout_height="@dimen/direction_height"
+            android:layout_alignTop="@id/direction1"
+            android:layout_marginLeft="@dimen/direction_marginleft"
+            android:layout_toRightOf="@id/direction1"
+            android:background="@color/direction_color"
+            android:orientation="horizontal" />
 
-            <LinearLayout
-                android:id="@+id/direction2"
-                android:layout_width="@dimen/direction_width"
-                android:layout_height="@dimen/direction_height"
-                android:layout_alignTop="@id/direction1"
-                android:layout_marginLeft="@dimen/direction_marginleft"
-                android:layout_toRightOf="@id/direction1"
-                android:background="@color/direction_color"
-                android:orientation="horizontal" />
+        <LinearLayout
+            android:id="@+id/direction3"
+            android:layout_width="@dimen/direction_width"
+            android:layout_height="@dimen/direction_height"
+            android:layout_alignTop="@id/direction2"
+            android:layout_marginLeft="@dimen/direction_marginleft"
+            android:layout_toRightOf="@id/direction2"
+            android:background="@color/direction_color"
+            android:orientation="horizontal" />
 
-            <LinearLayout
-                android:id="@+id/direction3"
-                android:layout_width="@dimen/direction_width"
-                android:layout_height="@dimen/direction_height"
-                android:layout_alignTop="@id/direction2"
-                android:layout_marginLeft="@dimen/direction_marginleft"
-                android:layout_toRightOf="@id/direction2"
-                android:background="@color/direction_color"
-                android:orientation="horizontal" />
+        <LinearLayout
+            android:id="@+id/direction4"
+            android:layout_width="@dimen/direction_width"
+            android:layout_height="@dimen/direction_height"
+            android:layout_alignTop="@id/direction3"
+            android:layout_marginLeft="@dimen/direction_marginleft"
+            android:layout_toRightOf="@id/direction3"
+            android:background="@color/direction_color"
+            android:orientation="horizontal" />
 
-            <LinearLayout
-                android:id="@+id/direction4"
-                android:layout_width="@dimen/direction_width"
-                android:layout_height="@dimen/direction_height"
-                android:layout_alignTop="@id/direction3"
-                android:layout_marginLeft="@dimen/direction_marginleft"
-                android:layout_toRightOf="@id/direction3"
-                android:background="@color/direction_color"
-                android:orientation="horizontal" />
+        <LinearLayout
+            android:id="@+id/direction5"
+            android:layout_width="@dimen/direction_width"
+            android:layout_height="@dimen/direction_height"
+            android:layout_alignTop="@id/direction4"
+            android:layout_marginLeft="@dimen/direction_marginleft"
+            android:layout_toRightOf="@id/direction4"
+            android:background="@color/direction_color"
+            android:orientation="horizontal" />
 
-            <LinearLayout
-                android:id="@+id/direction5"
-                android:layout_width="@dimen/direction_width"
-                android:layout_height="@dimen/direction_height"
-                android:layout_alignTop="@id/direction4"
-                android:layout_marginLeft="@dimen/direction_marginleft"
-                android:layout_toRightOf="@id/direction4"
-                android:background="@color/direction_color"
-                android:orientation="horizontal" />
+        <TextView
+            android:id="@+id/language_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="110dp"
+            android:text="@string/language_hint"
+            android:textColor="@color/language_hint_color"
+            android:textSize="12sp" />
+    </RelativeLayout>
 
-            <TextView
-                android:id="@+id/language_hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="110dp"
-                android:text="@string/language_hint"
-                android:textColor="@color/language_hint_color"
-                android:textSize="12sp" />
-        </RelativeLayout>
-
-    </LinearLayout>
 
     <!--460dp-->
 
     <FrameLayout
         android:id="@+id/content"
-        android:layout_width="500dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="131dp" />
@@ -122,7 +117,7 @@
             android:layout_height="@dimen/next_button_height"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="1dp"
-            android:background="@drawable/next_button"
+            android:background="@drawable/next_button_init"
             android:elevation="@dimen/next_button_elevation"
             android:text="@string/next_button_text"
             android:textAllCaps="false"

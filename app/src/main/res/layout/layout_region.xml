@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/searchEdt"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/all_bg"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:hint="Search Region"
+        android:maxLines="1"
+        android:paddingStart="56dp"
+        android:paddingEnd="20dp"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <requestFocus />
+    </EditText>
+
+    <me.yokeyword.indexablerv.IndexableLayout
+        android:id="@+id/indexAbleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:indexBar_selectedTextColor="@color/next_button_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchEdt" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchEdt" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/searchEdt" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

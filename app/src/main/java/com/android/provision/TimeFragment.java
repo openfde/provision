@@ -1,16 +1,12 @@
 package com.android.provision;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.Layout;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,30 +18,24 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.settingslib.datetime.ZoneGetter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.TreeSet;
 
 public class TimeFragment extends Fragment {
 
     private static final String HOURS_24 = "24";
     private static final String HOURS_12 = "12";
     private static final String TAG = "TimeFragment";
-    private LanguageActivity.LanguageListener languageListener;
+    private LanguageActivity.LanguageListener mLanguageListener;
     private Context mContext;
     private LinearLayout timeZone;
     private LinearLayout timeFormat;
     private Switch is24HourSwitch;
     private TextView currentTime;
     private TextView currentTimeZone;
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mTimeFormatBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -55,13 +45,17 @@ public class TimeFragment extends Fragment {
             }
         }
     };
+    private final BroadcastReceiver mTimeZoneBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_TIMEZONE_CHANGED)) {
+                currentTimeZone.setText(getTimeZoneOffsetAndName());
+            }
+        }
+    };
 
     public TimeFragment() {
-    }
-
-    @SuppressLint("ValidFragment")
-    public TimeFragment(LanguageActivity.LanguageListener languageListener) {
-        this.languageListener = languageListener;
     }
 
     @Nullable
@@ -70,14 +64,19 @@ public class TimeFragment extends Fragment {
         final View view = inflater.inflate(R.layout.layout_time, null);
         mContext = getContext();
         DateFormat.is24HourFormat(mContext);
+
         timeZone = view.findViewById(R.id.time_zone);
         timeFormat = view.findViewById(R.id.time_format);
         is24HourSwitch = view.findViewById(R.id.is24HourSwitch);
         currentTime = view.findViewById(R.id.current_time);
         currentTimeZone = view.findViewById(R.id.current_time_zone);
+
         currentTime.setText(getCurrentTime());
-        set24Hour(getContext(), is24HourSwitch.isChecked());
         currentTimeZone.setText(getTimeZoneOffsetAndName());
+
+        set24Hour(getContext(), is24HourSwitch.isChecked());
+
+        timeFormat.setOnClickListener(v -> is24HourSwitch.setChecked(!is24HourSwitch.isChecked()));
         is24HourSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean is24Hour) {
@@ -85,21 +84,34 @@ public class TimeFragment extends Fragment {
                 currentTime.setText(getCurrentTime());
             }
         });
-        TreeSet<BaseTimeZoneAdapter.BaseTimeZoneItem> baseTimeZoneItems = new TreeSet<>();
-        timeFormat.setOnClickListener(v -> is24HourSwitch.setChecked(!is24HourSwitch.isChecked()));
-        timeZone.setOnClickListener(v -> languageListener.setTimeZone());
+        timeZone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLanguageListener.addTimeZone();
+            }
+        });
 
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_TIME_TICK);
-        getContext().registerReceiver(mBroadcastReceiver, intentFilter);
+        IntentFilter timeIntentFilter = new IntentFilter();
+        timeIntentFilter.addAction(Intent.ACTION_TIME_TICK);
+        getContext().registerReceiver(mTimeFormatBroadcastReceiver, timeIntentFilter);
+
+        IntentFilter timeZoneIntentFilter = new IntentFilter();
+        timeZoneIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        getContext().registerReceiver(mTimeZoneBroadcastReceiver, timeZoneIntentFilter);
+
         return view;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        getContext().unregisterReceiver(mBroadcastReceiver);
+        getContext().unregisterReceiver(mTimeFormatBroadcastReceiver);
+        getContext().unregisterReceiver(mTimeZoneBroadcastReceiver);
+    }
+
+    public void setLanguageListener(LanguageActivity.LanguageListener languageListener) {
+        this.mLanguageListener = languageListener;
     }
 
     static void set24Hour(Context context, Boolean is24Hour) {
@@ -118,10 +130,7 @@ public class TimeFragment extends Fragment {
 
     private CharSequence getTimeZoneOffsetAndName() {
         final Calendar now = Calendar.getInstance();
-        CharSequence timeZoneOffsetAndName = ZoneGetter.getTimeZoneOffsetAndName(mContext,
-                now.getTimeZone(), now.getTime());
-//        Log.w(TAG, "timeZoneOffsetAndName = " + timeZoneOffsetAndName);
-        return timeZoneOffsetAndName;
+        return ZoneGetter.getTimeZoneOffsetAndName(mContext, now.getTimeZone(), now.getTime());
     }
 
 }

@@ -81,7 +81,7 @@ public class LocaleListEditFragment extends Fragment {
         Bundle arguments = getArguments();
         if (arguments != null) {
             LocaleStore.LocaleInfo localeInfo = (LocaleStore.LocaleInfo) arguments.get(ADD_LOCALE);
-            Log.d(TAG, "onCreateView add localeInfo: " + localeInfo);
+            Log.w(TAG, "onCreateView add localeInfo: " + localeInfo);
             mAdapter.addLocale(localeInfo);
         }
         return myLayout;

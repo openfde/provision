@@ -6,8 +6,6 @@ import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.icu.text.LocaleDisplayNames;
-import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -23,16 +21,8 @@ import android.widget.TextView;
 
 import com.android.internal.app.LocalePickerWithRegion;
 import com.android.internal.app.LocaleStore;
-import com.android.settingslib.datetime.ZoneGetter;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-
-import libcore.timezone.CountryZonesFinder;
-import libcore.timezone.TimeZoneFinder;
 
 public class LanguageActivity extends Activity implements LocalePickerWithRegion.LocaleSelectedListener, DatePickerDialog.OnDateSetListener {
     private static final int CHOOSE_LANGUAGE = 1;
@@ -46,13 +36,14 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     private TextView mLanguageTitle, mLanguageHint;
     private Button mPrevBtn, mNextBtn, mReturn;
     private LinearLayout direction1, direction2, direction3, direction4, direction5;
-    private Fragment localeListEditor, localeListAdd, virtualKeyboard, appSelect, locationSelect, TimeSelect;
+    private Fragment localeListEditor, localeListAdd, virtualKeyboard, appOptionFragment, gpsSetFragment,
+            timeFragment, timeZoneFragment, regionFragment, regionZoneFragment;
 
-    private String LOCALE_LIST_EDITOR = "localeListEditor", LOCALE_LIST_ADD = "localeListAdd", VIRTUAL_KEYBOARD = "virtualKeyboard", APP_OPTION = "appOption";
+    private String LOCALE_LIST_EDITOR = "localeListEditor", LOCALE_LIST_ADD = "localeListAdd", VIRTUAL_KEYBOARD = "virtualKeyboard",
+            GPS_ADD = "gpsAdd", APP_OPTION = "appOption", TIME = "time", TIME_ZONE = "timeZone", REGION = "region", REGION_ZONE = "regionZone";
     private LanguageListener languageListener = new LanguageListener() {
         @Override
         public void languageChanged(Locale locale) {
-
         }
 
         @Override
@@ -61,9 +52,20 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         }
 
         @Override
-        public void setTimeZone() {
+        public void addTimeZone() {
             gotoTimeZoneFragment();
         }
+
+        @Override
+        public void addRegion() {
+            gotoRegionFragment();
+        }
+
+        @Override
+        public void addRegionZone(String regionId) {
+            gotoRegionZoneFragment(regionId);
+        }
+
 
         @Override
         public void showAndHideButton(int visibility) {
@@ -85,11 +87,17 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             mReturn.setVisibility(visibility);
         }
 
+        @Override
+        public void backToTime() {
+            goBackToTimeFragment();
+        }
+
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_language);
@@ -127,24 +135,12 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         mPrevBtn = findViewById(R.id.prevBtn);
         mNextBtn = findViewById(R.id.nextBtn);
         mReturn = findViewById(R.id.returnBtn);
-        Locale mLocale = this.getResources().getConfiguration().locale;
-        String upperCase = mLocale.getCountry().toUpperCase(Locale.US);
-        Log.w(TAG, "upperCase = " + upperCase);
         gotoFragment();
         switchListen();
-        final Calendar now = Calendar.getInstance();
-        //Get TimeZone
-        CharSequence timeZoneOffsetAndName = ZoneGetter.getTimeZoneOffsetAndName(this, now.getTimeZone(), now.getTime());
-        Log.w(TAG, "timeZoneOffsetAndName = " + timeZoneOffsetAndName);
     }
 
-//    private void goNext() {
-//        gotoVirtualKeyboard();
-//    }
 
     private void gotoEditFragment(LocaleStore.LocaleInfo localeInfo) {
-//        mPrevBtn.setVisibility(View.GONE);
-//        mNextBtn.setVisibility(View.VISIBLE);
         if (getFragmentManager().findFragmentByTag(LOCALE_LIST_EDITOR) != null && localeInfo != null) {
             Bundle bundle = new Bundle();
             bundle.putSerializable(ADD_LOCALE, localeInfo);
@@ -180,11 +176,8 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     }
 
     private void gotoVirtualKeyboard() {
-//        Log.w(TAG, "gotoVirtualKeyboard");
         if (getFragmentManager().findFragmentByTag(VIRTUAL_KEYBOARD) != null) {
-//            Log.w(TAG, "gotoVirtualKeyboard != null");
         } else if (virtualKeyboard == null) {
-//            Log.w(TAG, "gotoVirtualKeyboard == null");
             virtualKeyboard = new VirtualKeyboardFragment(languageListener);
         }
         getFragmentManager()
@@ -197,12 +190,16 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     }
 
     private void gotoGpsFragment() {
-        GpsSetFragment gpsSetFragment = new GpsSetFragment();
+        if (getFragmentManager().findFragmentByTag(GPS_ADD) != null) {
+        } else if (gpsSetFragment == null) {
+            gpsSetFragment = new GpsSetFragment();
+        }
+        Log.w(TAG, "gpsSetFragment = null ? = " + (gpsSetFragment == null));
         getFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.animator.slide_right_in, R.animator.slide_left_out, R.animator.slide_left_in, R.animator.slide_right_out)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.content, gpsSetFragment, VIRTUAL_KEYBOARD)
+                .replace(R.id.content, gpsSetFragment, GPS_ADD)
                 .addToBackStack(null)
                 .commit();
     }
@@ -210,42 +207,76 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     private void gotoAppFragment() {
         if (getFragmentManager().findFragmentByTag(APP_OPTION) != null) {
             Log.w(TAG, "gotoAppOptionFragment");
-        } else if (appSelect == null) {
-            appSelect = new AppOptionFragment();
+        } else if (appOptionFragment == null) {
+            appOptionFragment = new AppOptionFragment();
         }
         getFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.animator.slide_right_in, R.animator.slide_left_out, R.animator.slide_left_in, R.animator.slide_right_out)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.content, appSelect, APP_OPTION)
+                .replace(R.id.content, appOptionFragment, APP_OPTION)
                 .addToBackStack(null)
                 .commit();
     }
 
     private void gotoTimeFragment() {
-//        if (getFragmentManager().findFragmentByTag(APP_OPTION) != null) {
-//        } else if (appSelect == null) {
-//            appSelect = new AppOptionFragment();
-//        }
-        TimeFragment timeFragment = new TimeFragment(languageListener);
+        if (getFragmentManager().findFragmentByTag(TIME) != null) {
+        } else if (timeFragment == null) {
+            timeFragment = new TimeFragment();
+        }
+        ((TimeFragment) timeFragment).setLanguageListener(languageListener);
         getFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.animator.slide_right_in, R.animator.slide_left_out, R.animator.slide_left_in, R.animator.slide_right_out)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.content, timeFragment, APP_OPTION)
-                .addToBackStack(null)
+                .replace(R.id.content, timeFragment, TIME)
+                .addToBackStack(TIME)
                 .commit();
     }
 
     private void gotoTimeZoneFragment() {
-        Log.w(TAG, "gotoTimeZoneFragment");
         languageListener.showAndHideButton(View.GONE);
         languageListener.showAndHideReturnButton(View.VISIBLE);
-        TimeZoneFragment timeZoneFragment = new TimeZoneFragment(languageListener);
+        if (getFragmentManager().findFragmentByTag(TIME_ZONE) != null) {
+        } else if (timeZoneFragment == null) {
+            timeZoneFragment = new TimeZoneFragment();
+        }
+        ((TimeZoneFragment) timeZoneFragment).setLanguageListener(languageListener);
         getFragmentManager()
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.content, timeZoneFragment, LOCALE_LIST_ADD)
+                .replace(R.id.content, timeZoneFragment, TIME_ZONE)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void gotoRegionFragment() {
+        Log.w(TAG, "gotoTimeZoneFragment");
+        if (getFragmentManager().findFragmentByTag(REGION) != null) {
+        } else if (regionFragment == null) {
+            regionFragment = new RegionFragment();
+        }
+        ((RegionFragment) regionFragment).setLanguageListener(languageListener);
+
+        getFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.content, regionFragment, REGION)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void gotoRegionZoneFragment(String regionId) {
+        if (getFragmentManager().findFragmentByTag(REGION_ZONE) != null) {
+        } else if (regionZoneFragment == null) {
+            regionZoneFragment = new RegionZoneFragment();
+        }
+        ((RegionZoneFragment) regionZoneFragment).setRegionId(regionId);
+        ((RegionZoneFragment) regionZoneFragment).setLanguageListener(languageListener);
+        getFragmentManager()
+                .beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.content, regionZoneFragment, REGION_ZONE)
                 .addToBackStack(null)
                 .commit();
     }
@@ -256,15 +287,21 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         gotoEditFragment(localeInfo);
     }
 
+    private void goBackToTimeFragment() {
+        getFragmentManager().popBackStack(TIME, 0);
+        mReturn.setVisibility(View.GONE);
+        setView();
+    }
+
     public void switchListen() {
         mPrevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (state <= CHOOSE_LANGUAGE) return;
                 state--;
-                int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
+//                int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
+//                Log.w(TAG, "mPrevBtn onClick and backStackEntryCount = " + backStackEntryCount);
                 getFragmentManager().popBackStack();
-                Log.w(TAG, "mPrevBtn onClick and backStackEntryCount = " + backStackEntryCount);
                 setView();
             }
         });
@@ -275,9 +312,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                     state++;
                     gotoFragment();
                 } else if (state == CHOOSE_TIME) {//OOBE END, GOTO START
-                    if (appSelect != null)
-                        ((AppOptionFragment) appSelect).InstallApp();
-                    else {// BUG
+                    if (appOptionFragment != null)
+                        ((AppOptionFragment) appOptionFragment).InstallApp();
+                    else {//something went wrong
                     }
                 }
                 Log.w(TAG, "state = " + state);
@@ -286,8 +323,8 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         mReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager().popBackStack();
-                setView();
+                Log.w(TAG, "returnOnclickListener");
+                goBackToTimeFragment();
             }
         });
     }
@@ -298,16 +335,16 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             case CHOOSE_LANGUAGE:
                 gotoEditFragment(null);
                 break;
-            case 2:
+            case CHOOSE_KEYBOARD:
                 gotoVirtualKeyboard();
                 break;
-            case 3:
+            case CHOOSE_APP:
                 gotoAppFragment();
                 break;
-            case 4:
+            case CHOOSE_LOCATION:
                 gotoGpsFragment();
                 break;
-            case 5:
+            case CHOOSE_TIME:
                 gotoTimeFragment();
         }
     }
@@ -349,6 +386,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             direction3.setBackgroundResource(R.color.direction_color);
             direction4.setBackgroundResource(R.color.direction_color);
             direction5.setBackgroundResource(R.color.direction_color);
+
             ViewGroup.LayoutParams params = findViewById(R.id.nextBtn).getLayoutParams();
             params.width = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
@@ -364,7 +402,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             mNextBtn.setLayoutParams(params);
             mNextBtn.setBackgroundResource(R.drawable.next_button);
             mNextBtn.setText(R.string.next_button_text);
+
             mLanguageTitle.setText(R.string.keyboard_panel_text);
+
             mLanguageHint.setVisibility(View.INVISIBLE);
         } else if (state == CHOOSE_APP) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
@@ -372,18 +412,20 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             direction3.setBackgroundResource(R.color.direction_marked_color);
             direction4.setBackgroundResource(R.color.direction_color);
             direction5.setBackgroundResource(R.color.direction_color);
-            ViewGroup.LayoutParams params = findViewById(R.id.nextBtn).getLayoutParams();
-            params.width = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    199,
-                    this.getResources().getDisplayMetrics()
-            );
-            params.height = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    44,
-                    this.getResources().getDisplayMetrics()
-            );
-            mNextBtn.setLayoutParams(params);
+
+//            ViewGroup.LayoutParams params = findViewById(R.id.nextBtn).getLayoutParams();
+//            params.width = (int) TypedValue.applyDimension(
+//                    TypedValue.COMPLEX_UNIT_DIP,
+//                    199,
+//                    this.getResources().getDisplayMetrics()
+//            );
+//            params.height = (int) TypedValue.applyDimension(
+//                    TypedValue.COMPLEX_UNIT_DIP,
+//                    44,
+//                    this.getResources().getDisplayMetrics()
+//            );
+//            mNextBtn.setLayoutParams(params);
+
             mLanguageTitle.setText(R.string.application_panel_text);
         } else if (state == CHOOSE_LOCATION) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
@@ -391,8 +433,10 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             direction3.setBackgroundResource(R.color.direction_marked_color);
             direction4.setBackgroundResource(R.color.direction_marked_color);
             direction5.setBackgroundResource(R.color.direction_color);
-            mNextBtn.setBackgroundResource(R.drawable.next_button);
+
+//            mNextBtn.setBackgroundResource(R.drawable.next_button);
             mNextBtn.setText(R.string.next_button_text);
+
             mLanguageTitle.setText(R.string.location_panel_text);
         } else if (state == CHOOSE_TIME) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
@@ -400,9 +444,11 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             direction3.setBackgroundResource(R.color.direction_marked_color);
             direction4.setBackgroundResource(R.color.direction_marked_color);
             direction5.setBackgroundResource(R.color.direction_marked_color);
+
             languageListener.showAndHideButton(View.VISIBLE);
-            mNextBtn.setBackgroundResource(R.drawable.done_button);
+//            mNextBtn.setBackgroundResource(R.drawable.done_button);
             mNextBtn.setText(R.string.done_button_text);
+
             mLanguageTitle.setText(R.string.time_panel_text);
         }
     }
@@ -417,6 +463,12 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
         void addLanguage();
 
+        void addTimeZone();
+
+        void addRegion();
+
+        void addRegionZone(String regionId);
+
         void showAndHidePrevButton(int visibility);
 
         void showAndHideNextButton(int visibility);
@@ -425,6 +477,6 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
         void showAndHideReturnButton(int visibility);
 
-        void setTimeZone();
+        void backToTime();
     }
 }

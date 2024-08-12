@@ -29,29 +29,18 @@ instead of an ImageView -->
     android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
     android:paddingRight="?android:attr/listPreferredItemPaddingRight">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="-4dp"
-        android:gravity="start|center_vertical"
-        android:minWidth="60dp"
-        android:orientation="horizontal"
-        android:paddingTop="4dp"
-        android:paddingRight="12dp"
-        android:paddingBottom="4dp">
-        <!-- It's not ImageView because the icon is Unicode emoji. -->
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:paddingTop="14dp"
         android:paddingBottom="14dp">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/regionZoneNameTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
@@ -60,14 +49,13 @@ instead of an ImageView -->
             android:textAppearance="?android:attr/textAppearanceListItem" />
 
         <RelativeLayout
-            android:id="@+id/summary_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@android:id/title"
             android:layout_alignLeft="@android:id/title">
 
             <TextView
-                android:id="@+id/current_time"
+                android:id="@+id/currentTimeTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -77,11 +65,11 @@ instead of an ImageView -->
             <!-- Use layout_alignParentStart and layout_toStartOf to make the TextView multi-lines
                 if needed -->
             <TextView
-                android:id="@+id/summary"
+                android:id="@+id/summaryTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/current_time"
+                android:layout_toStartOf="@+id/currentTimeTxt"
                 android:maxLines="10"
                 android:text="GMT+05:00"
                 android:textAppearance="?android:attr/textAppearanceSmall"
