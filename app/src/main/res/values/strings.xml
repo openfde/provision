@@ -36,7 +36,7 @@
     <string name="language_panel_text">Choose language</string>
     <string name="keyboard_panel_text">Choose keyboard</string>
     <string name="application_panel_text">Choose application</string>
-    <string name="location_panel_text">Choose location</string>
+    <string name="location_panel_text">Choose city</string>
     <string name="skip_button_text">Skip</string>
     <string name="date_and_time">Select time zone</string>
     <string name="sim_network_title_text">Sim network</string>

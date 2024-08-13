@@ -29,6 +29,7 @@
     <uses-permission android:name="android.permission.WRITE_APN_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"
@@ -54,10 +55,10 @@
                 <category android:name="android.intent.category.SETUP_WIZARD" />
             </intent-filter>
 
-            <layout
-                android:defaultWidth="700dp"
-                android:defaultHeight="950dp"
-                android:gravity="center" />
+<!--            <layout-->
+<!--                android:defaultWidth="700dp"-->
+<!--                android:defaultHeight="950dp"-->
+<!--                android:gravity="center" />-->
         </activity> <!-- Choose language -->
         <activity
             android:name=".DefaultActivity"

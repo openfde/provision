@@ -1,142 +1,157 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@drawable/default_wallpaper"
+    android:gravity="center"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/panel"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/panel_height"
-        android:background="@color/panel_background_color"
-        android:elevation="4dp"
-        android:paddingStart="@dimen/panel_title_padding">
-
-        <TextView
-            android:id="@+id/language_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/language_panel_text"
-            android:textColor="@color/panel_title_color"
-            android:textSize="@dimen/panel_title_size" />
-
-        <LinearLayout
-            android:id="@+id/direction1"
-            android:layout_width="@dimen/direction_width"
-            android:layout_height="@dimen/direction_height"
-            android:layout_below="@id/language_title"
-            android:layout_marginTop="@dimen/direction_margintop"
-            android:background="@color/direction_marked_color"
-            android:orientation="horizontal" />
-
-        <LinearLayout
-            android:id="@+id/direction2"
-            android:layout_width="@dimen/direction_width"
-            android:layout_height="@dimen/direction_height"
-            android:layout_alignTop="@id/direction1"
-            android:layout_marginLeft="@dimen/direction_marginleft"
-            android:layout_toRightOf="@id/direction1"
-            android:background="@color/direction_color"
-            android:orientation="horizontal" />
-
-        <LinearLayout
-            android:id="@+id/direction3"
-            android:layout_width="@dimen/direction_width"
-            android:layout_height="@dimen/direction_height"
-            android:layout_alignTop="@id/direction2"
-            android:layout_marginLeft="@dimen/direction_marginleft"
-            android:layout_toRightOf="@id/direction2"
-            android:background="@color/direction_color"
-            android:orientation="horizontal" />
-
-        <LinearLayout
-            android:id="@+id/direction4"
-            android:layout_width="@dimen/direction_width"
-            android:layout_height="@dimen/direction_height"
-            android:layout_alignTop="@id/direction3"
-            android:layout_marginLeft="@dimen/direction_marginleft"
-            android:layout_toRightOf="@id/direction3"
-            android:background="@color/direction_color"
-            android:orientation="horizontal" />
-
-        <LinearLayout
-            android:id="@+id/direction5"
-            android:layout_width="@dimen/direction_width"
-            android:layout_height="@dimen/direction_height"
-            android:layout_alignTop="@id/direction4"
-            android:layout_marginLeft="@dimen/direction_marginleft"
-            android:layout_toRightOf="@id/direction4"
-            android:background="@color/direction_color"
-            android:orientation="horizontal" />
-
-        <TextView
-            android:id="@+id/language_hint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="110dp"
-            android:text="@string/language_hint"
-            android:textColor="@color/language_hint_color"
-            android:textSize="12sp" />
-    </RelativeLayout>
-
-
-    <!--460dp-->
-
-    <FrameLayout
-        android:id="@+id/content"
+    <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="131dp" />
+        android:background="#59000000" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingBottom="25dp">
+    <RelativeLayout
+        android:layout_width="700dp"
+        android:layout_height="950dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/rounded_border">
 
-        <Button
-            android:id="@+id/prevBtn"
-            android:layout_width="100dp"
-            android:layout_height="44dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/prev_button"
-            android:elevation="@dimen/prev_button_elevation"
-            android:text="@string/prev_button_text"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:visibility="gone" />
+        <RelativeLayout
+            android:id="@+id/panel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/panel_height"
+            android:background="@drawable/rounded_panel"
+            android:elevation="4dp"
+            android:paddingStart="@dimen/panel_title_padding">
 
-        <Button
-            android:id="@+id/nextBtn"
-            android:layout_width="300dp"
-            android:layout_height="@dimen/next_button_height"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="1dp"
-            android:background="@drawable/next_button_init"
-            android:elevation="@dimen/next_button_elevation"
-            android:text="@string/next_button_text"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/next_button_text_size" />
+            <TextView
+                android:id="@+id/language_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/language_panel_text"
+                android:textColor="@color/panel_title_color"
+                android:textSize="@dimen/panel_title_size" />
 
-        <Button
-            android:id="@+id/returnBtn"
-            android:layout_width="300dp"
-            android:layout_height="@dimen/next_button_height"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="1dp"
-            android:background="@drawable/return_button"
-            android:elevation="@dimen/next_button_elevation"
-            android:text="@string/return_button_text"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="@dimen/next_button_text_size"
-            android:visibility="gone" />
+            <LinearLayout
+                android:id="@+id/direction1"
+                android:layout_width="@dimen/direction_width"
+                android:layout_height="@dimen/direction_height"
+                android:layout_below="@id/language_title"
+                android:layout_marginTop="@dimen/direction_margintop"
+                android:background="@color/direction_marked_color"
+                android:orientation="horizontal" />
 
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/direction2"
+                android:layout_width="@dimen/direction_width"
+                android:layout_height="@dimen/direction_height"
+                android:layout_alignTop="@id/direction1"
+                android:layout_marginLeft="@dimen/direction_marginleft"
+                android:layout_toRightOf="@id/direction1"
+                android:background="@color/direction_color"
+                android:orientation="horizontal" />
+
+            <LinearLayout
+                android:id="@+id/direction3"
+                android:layout_width="@dimen/direction_width"
+                android:layout_height="@dimen/direction_height"
+                android:layout_alignTop="@id/direction2"
+                android:layout_marginLeft="@dimen/direction_marginleft"
+                android:layout_toRightOf="@id/direction2"
+                android:background="@color/direction_color"
+                android:orientation="horizontal" />
+
+            <LinearLayout
+                android:id="@+id/direction4"
+                android:layout_width="@dimen/direction_width"
+                android:layout_height="@dimen/direction_height"
+                android:layout_alignTop="@id/direction3"
+                android:layout_marginLeft="@dimen/direction_marginleft"
+                android:layout_toRightOf="@id/direction3"
+                android:background="@color/direction_color"
+                android:orientation="horizontal" />
+
+            <LinearLayout
+                android:id="@+id/direction5"
+                android:layout_width="@dimen/direction_width"
+                android:layout_height="@dimen/direction_height"
+                android:layout_alignTop="@id/direction4"
+                android:layout_marginLeft="@dimen/direction_marginleft"
+                android:layout_toRightOf="@id/direction4"
+                android:background="@color/direction_color"
+                android:visibility="gone"
+                android:orientation="horizontal" />
+
+            <TextView
+                android:id="@+id/language_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="110dp"
+                android:text="@string/language_hint"
+                android:textColor="@color/language_hint_color"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+
+        <!--460dp-->
+
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="131dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="25dp">
+
+            <Button
+                android:id="@+id/prevBtn"
+                android:layout_width="100dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/prev_button"
+                android:elevation="@dimen/prev_button_elevation"
+                android:text="@string/prev_button_text"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/nextBtn"
+                android:layout_width="300dp"
+                android:layout_height="@dimen/next_button_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/next_button_init"
+                android:elevation="@dimen/next_button_elevation"
+                android:text="@string/next_button_text"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/next_button_text_size" />
+
+            <Button
+                android:id="@+id/returnBtn"
+                android:layout_width="300dp"
+                android:layout_height="@dimen/next_button_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="1dp"
+                android:background="@drawable/return_button"
+                android:elevation="@dimen/next_button_elevation"
+                android:text="@string/return_button_text"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/next_button_text_size"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

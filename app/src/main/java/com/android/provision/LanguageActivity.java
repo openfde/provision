@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -21,15 +23,20 @@ import android.widget.TextView;
 
 import com.android.internal.app.LocalePickerWithRegion;
 import com.android.internal.app.LocaleStore;
+import com.android.internal.policy.DecorView;
 
 import java.util.Locale;
 
 public class LanguageActivity extends Activity implements LocalePickerWithRegion.LocaleSelectedListener, DatePickerDialog.OnDateSetListener {
+    //    private static final int CHOOSE_LANGUAGE = 1;
+//    private static final int CHOOSE_KEYBOARD = 2;
+//    private static final int CHOOSE_APP = 3;
+//    private static final int CHOOSE_LOCATION = 4;
+//    private static final int CHOOSE_TIME = 5;
     private static final int CHOOSE_LANGUAGE = 1;
     private static final int CHOOSE_KEYBOARD = 2;
-    private static final int CHOOSE_APP = 3;
-    private static final int CHOOSE_LOCATION = 4;
-    private static final int CHOOSE_TIME = 5;
+    private static final int CHOOSE_LOCATION = 3;
+    private static final int CHOOSE_TIME = 4;
     private static int state = CHOOSE_LANGUAGE;
     private static final String TAG = "LanguageActivity";
     public static final String ADD_LOCALE = "addLocale";
@@ -100,23 +107,24 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        DecorView decorView = (DecorView) getWindow().getDecorView();
+        decorView.startFullScreenWindow();
         setContentView(R.layout.activity_language);
-
-        //todo remove this after testing first run
-
-        //Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
-        //Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
-        // remove this activity from the package manager.
-        // PackageManager pm = getPackageManager();
-        // ComponentName name = new ComponentName(this, DefaultActivity.class);
-        // pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-        //         PackageManager.DONT_KILL_APP);
 
 
         Intent intent = new Intent("com.fde.SYSTEM_INIT_ACTION");
         intent.setPackage("com.boringdroid.systemui");
         sendBroadcast(intent);
         Settings.Global.putString(getContentResolver(), Settings.Global.DEVICE_NAME, "OpenFDE device");
+
+        // remove this after testing first run
+        Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
+        Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
+        // remove this activity from the package manager.
+        PackageManager pm = getPackageManager();
+        ComponentName name = new ComponentName(this, LanguageActivity.class);
+        pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+
 
 
 //        findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
@@ -314,8 +322,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                 } else if (state == CHOOSE_TIME) {//OOBE END, GOTO START
                     if (appOptionFragment != null)
                         ((AppOptionFragment) appOptionFragment).InstallApp();
-                    else {//something went wrong
-                    }
+                    finish();
+//                    else {//something went wrong
+//                    }
                 }
                 Log.w(TAG, "state = " + state);
             }
@@ -338,9 +347,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             case CHOOSE_KEYBOARD:
                 gotoVirtualKeyboard();
                 break;
-            case CHOOSE_APP:
-                gotoAppFragment();
-                break;
+//            case CHOOSE_APP:
+//                gotoAppFragment();
+//                break;
             case CHOOSE_LOCATION:
                 gotoGpsFragment();
                 break;
@@ -350,7 +359,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     }
 
     public void setView() {
-        if (state == CHOOSE_LANGUAGE) {
+        if (state == 1) {
             // Set directionColor
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_color);
@@ -380,7 +389,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
             // Set Language Hint
             mLanguageHint.setVisibility(View.VISIBLE);
-        } else if (state == CHOOSE_KEYBOARD) {
+        } else if (state == 2) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_marked_color);
             direction3.setBackgroundResource(R.color.direction_color);
@@ -406,28 +415,19 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             mLanguageTitle.setText(R.string.keyboard_panel_text);
 
             mLanguageHint.setVisibility(View.INVISIBLE);
-        } else if (state == CHOOSE_APP) {
+        } else if (state == 3) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_marked_color);
             direction3.setBackgroundResource(R.color.direction_marked_color);
             direction4.setBackgroundResource(R.color.direction_color);
             direction5.setBackgroundResource(R.color.direction_color);
 
-//            ViewGroup.LayoutParams params = findViewById(R.id.nextBtn).getLayoutParams();
-//            params.width = (int) TypedValue.applyDimension(
-//                    TypedValue.COMPLEX_UNIT_DIP,
-//                    199,
-//                    this.getResources().getDisplayMetrics()
-//            );
-//            params.height = (int) TypedValue.applyDimension(
-//                    TypedValue.COMPLEX_UNIT_DIP,
-//                    44,
-//                    this.getResources().getDisplayMetrics()
-//            );
-//            mNextBtn.setLayoutParams(params);
+//            mLanguageTitle.setText(R.string.application_panel_text);
 
-            mLanguageTitle.setText(R.string.application_panel_text);
-        } else if (state == CHOOSE_LOCATION) {
+
+            mNextBtn.setText(R.string.next_button_text);
+            mLanguageTitle.setText(R.string.location_panel_text);
+        } else if (state == 4) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_marked_color);
             direction3.setBackgroundResource(R.color.direction_marked_color);
@@ -435,10 +435,14 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             direction5.setBackgroundResource(R.color.direction_color);
 
 //            mNextBtn.setBackgroundResource(R.drawable.next_button);
-            mNextBtn.setText(R.string.next_button_text);
+//            mNextBtn.setText(R.string.next_button_text);
+//            mLanguageTitle.setText(R.string.location_panel_text);
 
-            mLanguageTitle.setText(R.string.location_panel_text);
-        } else if (state == CHOOSE_TIME) {
+
+            mNextBtn.setText(R.string.done_button_text);
+            mLanguageTitle.setText(R.string.time_panel_text);
+            languageListener.showAndHideButton(View.VISIBLE);
+        } else if (state == 5) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_marked_color);
             direction3.setBackgroundResource(R.color.direction_marked_color);
