@@ -112,21 +112,6 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         setContentView(R.layout.activity_language);
 
 
-        Intent intent = new Intent("com.fde.SYSTEM_INIT_ACTION");
-        intent.setPackage("com.boringdroid.systemui");
-        sendBroadcast(intent);
-        Settings.Global.putString(getContentResolver(), Settings.Global.DEVICE_NAME, "OpenFDE device");
-
-        // remove this after testing first run
-        Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
-        Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
-        // remove this activity from the package manager.
-        PackageManager pm = getPackageManager();
-        ComponentName name = new ComponentName(this, LanguageActivity.class);
-        pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-
-
-
 //        findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -307,8 +292,6 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             public void onClick(View view) {
                 if (state <= CHOOSE_LANGUAGE) return;
                 state--;
-//                int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
-//                Log.w(TAG, "mPrevBtn onClick and backStackEntryCount = " + backStackEntryCount);
                 getFragmentManager().popBackStack();
                 setView();
             }
@@ -319,10 +302,10 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                 if (state >= CHOOSE_LANGUAGE && state <= CHOOSE_LOCATION) {
                     state++;
                     gotoFragment();
-                } else if (state == CHOOSE_TIME) {//OOBE END, GOTO START
+                } else if (state == CHOOSE_TIME) {//Provision end, Start launcher
                     if (appOptionFragment != null)
                         ((AppOptionFragment) appOptionFragment).InstallApp();
-                    finish();
+                    finishSetUpWizard();
 //                    else {//something went wrong
 //                    }
                 }
@@ -356,6 +339,23 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             case CHOOSE_TIME:
                 gotoTimeFragment();
         }
+    }
+
+    private void finishSetUpWizard() {
+        Intent intent = new Intent("com.fde.SYSTEM_INIT_ACTION");
+        intent.setPackage("com.boringdroid.systemui");
+        sendBroadcast(intent);
+        Settings.Global.putString(getContentResolver(), Settings.Global.DEVICE_NAME, "OpenFDE device");
+
+        // remove this after testing first run
+        Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
+        Settings.Secure.putInt(getContentResolver(), "user_setup_complete", 1);
+
+        // remove this activity from the package manager.
+        PackageManager pm = getPackageManager();
+        ComponentName name = new ComponentName(getApplicationContext(), LanguageActivity.class);
+        pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        finish();
     }
 
     public void setView() {
