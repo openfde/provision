@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -22,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
@@ -128,7 +131,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         intent.setPackage("com.boringdroid.systemui");
         sendBroadcast(intent);
 
-        fetchDataPeriodically();
+        fetchDataPeriodically(this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -157,12 +160,14 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         switchListen();
     }
 
-    private void fetchDataPeriodically() {
+    private void fetchDataPeriodically(Context context) {
         final Runnable fetchTask = new Runnable() {
             @Override
             public void run() {
                 if (fetchData()) {
+                    Animation animation = AnimationUtils.loadAnimation(context, R.anim.activity_in);
                     findViewById(R.id.provisionRelativeLayout).setVisibility(View.VISIBLE);
+                    findViewById(R.id.provisionRelativeLayout).startAnimation(animation);
                     handler.removeCallbacks(this);
                 } else {
                     handler.postDelayed(this, 1000);
@@ -210,7 +215,6 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         if (list == null || list.isEmpty()) return false;
 
 
-
         String countryName = list.get(0);
         selection = "COUNTRY_NAME = ?";
         if (!Utils.isChineseLanguage(this)) {
@@ -242,7 +246,6 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             }
         }
         if (list == null || list.isEmpty()) return false;
-
 
 
         String province = list.get(0);
@@ -499,7 +502,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         Log.e(TAG, "finishSetUpWizard start");
 
         SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.putBoolean(AVAILABLE, false).commit();
+        edit.putBoolean(AVAILABLE, true).commit();
 
         Settings.Global.putString(getContentResolver(), Settings.Global.DEVICE_NAME, "OpenFDE device");
         Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
