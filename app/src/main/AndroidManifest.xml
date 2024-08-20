@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.android.provision"
+    package="com.android.oobe"
     android:sharedUserId="android.uid.system">
     <!-- For miscellaneous settings -->
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
@@ -40,10 +40,11 @@
 
 
         <activity
-            android:name=".LanguageActivity"
+            android:name="com.android.oobe.LanguageActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:immersive="true"
+            android:theme="@style/Theme.Provision"
             android:label="@string/app_name"
             android:resizeableActivity="true">
             <intent-filter android:priority="1">
@@ -61,7 +62,7 @@
 <!--                android:gravity="center" />-->
         </activity> <!-- Choose language -->
         <activity
-            android:name=".DefaultActivity"
+            android:name="com.android.oobe.DefaultActivity"
             android:exported="true" />
     </application>
 

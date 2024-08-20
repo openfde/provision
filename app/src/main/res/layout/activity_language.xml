@@ -11,8 +11,10 @@
         android:background="#59000000" />
 
     <RelativeLayout
+        android:id="@+id/provisionRelativeLayout"
         android:layout_width="700dp"
         android:layout_height="950dp"
+        android:visibility="invisible"
         android:layout_centerInParent="true"
         android:background="@drawable/rounded_border">
 

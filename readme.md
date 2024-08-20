@@ -2,10 +2,10 @@ install system app
 
 1. add permission
 
-/frameworks/base/data/etc/com.android.provision.xml
+/frameworks/base/data/etc/oobe.xml
 /frameworks/base/data/etc/privapp-permissions-platform.xml
 
- <privapp-permissions package="com.android.provision">
+ <privapp-permissions package="com.android.oobe">
       <permission name="android.permission.ACCESS_CHECKIN_PROPERTIES"/>
         <permission name="android.permission.ACCESS_NOTIFICATIONS"/>
         <permission name="android.permission.BACKUP"/>

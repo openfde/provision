@@ -25,7 +25,7 @@
         android:textColor="@color/black"
         />
 
-    <com.android.provision.ToggleSwitch
+    <com.android.oobe.ToggleSwitch
         android:id="@+id/switch_toggle"
         android:layout_width="46dp"
         android:layout_alignParentRight="true"
