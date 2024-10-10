@@ -14,7 +14,7 @@
      limitations under the License.
 -->
 
-<com.android.oobe.LocaleDragCell
+<com.android.oobe.language.LocaleDragCell
               xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -75,4 +75,4 @@
         android:background="?android:attr/listDivider"
         android:layout_alignParentBottom="true"/>
 
-</com.android.oobe.LocaleDragCell>
+</com.android.oobe.language.LocaleDragCell>

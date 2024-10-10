@@ -2,23 +2,23 @@ package com.android.oobe;
 
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -26,45 +26,56 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 import com.android.internal.app.LocalePickerWithRegion;
 import com.android.internal.app.LocaleStore;
 import com.android.internal.policy.DecorView;
+import com.android.oobe.application.AppFragment;
+import com.android.oobe.application.Singleton;
+import com.android.oobe.application.net.DownloadService;
+import com.android.oobe.keyboard.VirtualKeyboardFragment;
+import com.android.oobe.language.LocaleListEditFragment;
+import com.android.oobe.location.GpsSetFragment;
+import com.android.oobe.time.RegionFragment;
+import com.android.oobe.time.RegionZoneFragment;
+import com.android.oobe.time.TimeFragment;
+import com.android.oobe.time.TimeZoneFragment;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.Locale;
-import java.util.Map;
 
-public class LanguageActivity extends Activity implements LocalePickerWithRegion.LocaleSelectedListener, DatePickerDialog.OnDateSetListener {
-    //    private static final int CHOOSE_LANGUAGE = 1;
-//    private static final int CHOOSE_KEYBOARD = 2;
-//    private static final int CHOOSE_APP = 3;
-//    private static final int CHOOSE_LOCATION = 4;
-//    private static final int CHOOSE_TIME = 5;
+public class LanguageActivity extends Activity implements LocalePickerWithRegion.LocaleSelectedListener {
+
+    private static final String TAG = "LanguageActivity";
+
     private static final int CHOOSE_LANGUAGE = 1;
     private static final int CHOOSE_KEYBOARD = 2;
     private static final int CHOOSE_LOCATION = 3;
     private static final int CHOOSE_TIME = 4;
+    private static final int CHOOSE_APP = 5;
     private static int state = CHOOSE_LANGUAGE;
-    private static final String TAG = "LanguageActivity";
-    public static final String ADD_LOCALE = "addLocale";
-    private static final String AVAILABLE = "isAvailable";
-    private Boolean isAvailable = false;
+
     private TextView mLanguageTitle, mLanguageHint;
     private Button mPrevBtn, mNextBtn, mReturn;
     private LinearLayout direction1, direction2, direction3, direction4, direction5;
-    private Fragment localeListEditor, localeListAdd, virtualKeyboard, appOptionFragment, gpsSetFragment,
-            timeFragment, timeZoneFragment, regionFragment, regionZoneFragment;
-    private SharedPreferences sharedPreferences;
 
+    private Fragment localeListEditor, localeListAdd, virtualKeyboard, appFragment, gpsSetFragment,
+            timeFragment, timeZoneFragment, regionFragment, regionZoneFragment;
+
+    public static final String ADD_LOCALE = "addLocale";
     private String LOCALE_LIST_EDITOR = "localeListEditor", LOCALE_LIST_ADD = "localeListAdd", VIRTUAL_KEYBOARD = "virtualKeyboard",
-            GPS_ADD = "gpsAdd", APP_OPTION = "appOption", TIME = "time", TIME_ZONE = "timeZone", REGION = "region", REGION_ZONE = "regionZone";
+            GPS_ADD = "gpsAdd", APP = "app", TIME = "time", TIME_ZONE = "timeZone", REGION = "region", REGION_ZONE = "regionZone";
 
     private Handler handler = new Handler(Looper.getMainLooper());
+    private Singleton singleton = Singleton.getInstance();
+    private DownloadService downloadService;
 
     private LanguageListener languageListener = new LanguageListener() {
         @Override
@@ -119,17 +130,33 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
     };
 
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            if (service instanceof DownloadService.DownloadBinder) {
+                downloadService = ((DownloadService.DownloadBinder) service).getService();
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-        isAvailable = sharedPreferences.getBoolean(AVAILABLE, false);
-        if (isAvailable) finishSetUpWizard();
 
         super.onCreate(savedInstanceState);
 
-        Intent intent = new Intent("com.fde.SYSTEM_INIT_ACTION");
-        intent.setPackage("com.boringdroid.systemui");
-        sendBroadcast(intent);
+        Intent intentBroadcast = new Intent("com.fde.SYSTEM_INIT_ACTION");
+        intentBroadcast.setPackage("com.boringdroid.systemui");
+        sendBroadcast(intentBroadcast);
+
+        Intent intentService = new Intent(this, DownloadService.class);
+        startService(intentService);
+        bindService(intentService, connection, Context.BIND_AUTO_CREATE);
 
         fetchDataPeriodically(this);
 
@@ -137,15 +164,10 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         DecorView decorView = (DecorView) getWindow().getDecorView();
         decorView.startFullScreenWindow();
+
+        EventBusUtils.register(this);
+
         setContentView(R.layout.activity_language);
-
-
-//        findViewById(R.id.nextBtn).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                goNext();
-//            }
-//        });
         mLanguageTitle = findViewById(R.id.language_title);
         mLanguageHint = findViewById(R.id.language_hint);
         direction1 = findViewById(R.id.direction1);
@@ -156,15 +178,30 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         mPrevBtn = findViewById(R.id.prevBtn);
         mNextBtn = findViewById(R.id.nextBtn);
         mReturn = findViewById(R.id.returnBtn);
-        gotoFragment();
+
         switchListen();
+        gotoFragment();
+
+    }
+
+    public DownloadService getDownloadService() {
+        return downloadService;
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBusUtils.unregister(this);
+        Intent intentService = new Intent(this, DownloadService.class);
+        stopService(intentService);
+        unbindService(connection);
+        super.onDestroy();
     }
 
     private void fetchDataPeriodically(Context context) {
         final Runnable fetchTask = new Runnable() {
             @Override
             public void run() {
-                if (fetchData()) {
+                if (DataFetcher.isAvailable(context)) {
                     Animation animation = AnimationUtils.loadAnimation(context, R.anim.activity_in);
                     findViewById(R.id.provisionRelativeLayout).setVisibility(View.VISIBLE);
                     findViewById(R.id.provisionRelativeLayout).startAnimation(animation);
@@ -177,146 +214,42 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         handler.post(fetchTask);
     }
 
-    private boolean fetchData() {
-        return isGpsAvailable() && isTimeZoneAvailable();
+    @Subscribe
+    public void onNextButtonTextEvent(ButtonTextEvent buttonTextEvent) {
+        String message = buttonTextEvent.getMessage();
+        mNextBtn.setText(message);
     }
 
-
-    private Boolean isGpsAvailable() {
-        final String REGION_URI = "content://com.boringdroid.systemuiprovider.region";
-        Cursor cursor = null;
-        Map<String, Object> result = null;
-        String selection = null;
-        String[] selectionArgs = null;
-        List<String> list = null;
-        try {
-            ContentResolver contentResolver = getContentResolver();
-            cursor = contentResolver.query(Uri.parse(REGION_URI + "/REGION_COUNTRY"), null, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                list = new ArrayList<>();
-                do {
-                    if (Utils.isChineseLanguage(this)) {
-                        String COUNTRY_NAME = cursor.getString(cursor.getColumnIndex("COUNTRY_NAME"));
-                        list.add(COUNTRY_NAME);
-                    } else {
-                        String COUNTRY_NAME_EN = cursor.getString(cursor.getColumnIndex("COUNTRY_NAME_EN"));
-                        list.add(COUNTRY_NAME_EN);
-                    }
-                } while (cursor.moveToNext());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        if (list == null || list.isEmpty()) return false;
-
-
-        String countryName = list.get(0);
-        selection = "COUNTRY_NAME = ?";
-        if (!Utils.isChineseLanguage(this)) {
-            selection = "COUNTRY_NAME_EN = ?";
-        }
-        selectionArgs = new String[]{countryName};
-        list = null;
-        try {
-            ContentResolver contentResolver = getContentResolver();
-            cursor = contentResolver.query(Uri.parse(REGION_URI + "/REGION_PROVINCE"), null, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                list = new ArrayList<>();
-                do {
-                    if (Utils.isChineseLanguage(this)) {
-                        String PROVINCE_NAME = cursor.getString(cursor.getColumnIndex("PROVINCE_NAME"));
-                        list.add(PROVINCE_NAME);
-                    } else {
-                        String PROVINCE_NAME_EN = cursor.getString(cursor.getColumnIndex("PROVINCE_NAME_EN"));
-                        list.add(PROVINCE_NAME_EN);
-                    }
-                } while (cursor.moveToNext());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        if (list == null || list.isEmpty()) return false;
-
-
-        String province = list.get(0);
-        cursor = null;
-        result = null;
-        selection = "PROVINCE_NAME = ?";
-        if (!Utils.isChineseLanguage(this)) {
-            selection = "PROVINCE_NAME_EN = ?";
-        }
-        selectionArgs = new String[]{province};
-        list = null;
-        List<String> listCityGps = new ArrayList<>();
-        String gpsValue = null;
-        try {
-            ContentResolver contentResolver = getContentResolver();
-            cursor = contentResolver.query(Uri.parse(REGION_URI + "/REGION_INFO"), null, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                list = new ArrayList<>();
-                do {
-                    String CITY_ID = cursor.getString(cursor.getColumnIndex("CITY_ID"));
-                    String GPS = cursor.getString(cursor.getColumnIndex("GPS"));
-                    listCityGps.add(GPS);
-                    if (Utils.isChineseLanguage(this)) {
-                        String CITY_NAME = cursor.getString(cursor.getColumnIndex("CITY_NAME"));
-                        list.add(CITY_NAME);
-                    } else {
-                        String CITY_NAME_EN = cursor.getString(cursor.getColumnIndex("CITY_NAME_EN"));
-                        list.add(CITY_NAME_EN);
-                    }
-
-                } while (cursor.moveToNext());
-            }
-            gpsValue = listCityGps.get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        if (list == null || list.isEmpty() || gpsValue == null) return false;
-
-        return true;
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
-
-    private boolean isTimeZoneAvailable() {
-        return TimeZoneProvider.getRegionId(this) != null;
-    }
-
 
     private void gotoEditFragment(LocaleStore.LocaleInfo localeInfo) {
         if (getFragmentManager().findFragmentByTag(LOCALE_LIST_EDITOR) != null && localeInfo != null) {
             Bundle bundle = new Bundle();
             bundle.putSerializable(ADD_LOCALE, localeInfo);
             localeListEditor.setArguments(bundle);
-            Log.w(TAG, "EditFragment != null");
         } else if (localeListEditor == null) {
             localeListEditor = new LocaleListEditFragment(languageListener);
         }
-        Log.d(TAG, "gotoEditFragment");
         getFragmentManager()
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, localeListEditor, LOCALE_LIST_EDITOR)
-                .addToBackStack(null)
                 .commit();
-        Log.w(TAG, "mPreBtn = " + (mPrevBtn.getVisibility() == View.INVISIBLE));
+    }
+
+    @Override
+    public void onLocaleSelected(LocaleStore.LocaleInfo localeInfo) {
+        getFragmentManager().popBackStack();
+        getFragmentManager().popBackStack();
+        gotoEditFragment(localeInfo);
     }
 
     private void gotoAddFragment() {
         languageListener.showAndHideButton(View.GONE);
+        languageListener.showAndHideReturnButton(View.VISIBLE);
         if (localeListAdd == null) {
             localeListAdd = LocalePickerWithRegion.createLanguagePicker(this, this, false /* translate only */);
         }
@@ -347,27 +280,11 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         } else if (gpsSetFragment == null) {
             gpsSetFragment = new GpsSetFragment();
         }
-        Log.w(TAG, "gpsSetFragment = null ? = " + (gpsSetFragment == null));
         getFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.animator.slide_right_in, R.animator.slide_left_out, R.animator.slide_left_in, R.animator.slide_right_out)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, gpsSetFragment, GPS_ADD)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    private void gotoAppFragment() {
-        if (getFragmentManager().findFragmentByTag(APP_OPTION) != null) {
-            Log.w(TAG, "gotoAppOptionFragment");
-        } else if (appOptionFragment == null) {
-            appOptionFragment = new AppOptionFragment();
-        }
-        getFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.animator.slide_right_in, R.animator.slide_left_out, R.animator.slide_left_in, R.animator.slide_right_out)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.content, appOptionFragment, APP_OPTION)
                 .addToBackStack(null)
                 .commit();
     }
@@ -404,13 +321,11 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
     }
 
     private void gotoRegionFragment() {
-        Log.w(TAG, "gotoTimeZoneFragment");
         if (getFragmentManager().findFragmentByTag(REGION) != null) {
         } else if (regionFragment == null) {
             regionFragment = new RegionFragment();
         }
         ((RegionFragment) regionFragment).setLanguageListener(languageListener);
-
         getFragmentManager()
                 .beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -434,16 +349,24 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                 .commit();
     }
 
-    @Override
-    public void onLocaleSelected(LocaleStore.LocaleInfo localeInfo) {
-        Log.d(TAG, "onLocaleSelected: localeInfo:" + localeInfo + "");
-        gotoEditFragment(localeInfo);
-    }
-
     private void goBackToTimeFragment() {
         getFragmentManager().popBackStack(TIME, 0);
         mReturn.setVisibility(View.GONE);
         setView();
+    }
+
+    private void gotoAppFragment() {
+        if (getFragmentManager().findFragmentByTag(APP) != null) {
+        } else if (appFragment == null) {
+            appFragment = new AppFragment();
+        }
+        getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.animator.slide_right_in, R.animator.slide_left_out, R.animator.slide_left_in, R.animator.slide_right_out)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.content, appFragment, APP)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void switchListen() {
@@ -459,21 +382,39 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (state >= CHOOSE_LANGUAGE && state <= CHOOSE_LOCATION) {
+                if (state >= CHOOSE_LANGUAGE && state <= CHOOSE_TIME) {
                     state++;
                     gotoFragment();
-                } else if (state == CHOOSE_TIME) {//Provision end, Start launcher
-                    if (appOptionFragment != null)
-                        ((AppOptionFragment) appOptionFragment).InstallApp();
-                    finishSetUpWizard();
+                } else if (state == CHOOSE_APP && singleton.hasNetworkRequestBeenInitiated()) {//Provision end, Start launcher
+                    if (StringUtils.equals(mNextBtn.getText(), getString(R.string.done_button_text))) {
+                        if (singleton.isNothingDownload()) {
+                            finishSetUpWizard();
+                        } else {
+                            showConfirmationDialog();
+                        }
+                    } else {
+                        ((AppFragment) appFragment).gotoAppDownloadFragment();
+                        mNextBtn.setText(getString(R.string.done_button_text));
+                    }
                 }
             }
         });
         mReturn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.w(TAG, "returnOnclickListener");
-                goBackToTimeFragment();
+                getFragmentManager().popBackStack();
+                Fragment fragment = getFragmentManager().findFragmentById(R.id.content);
+                if (fragment == localeListEditor)
+                    ((LocaleListEditFragment) localeListEditor).setRemoveMode(false);
+            }
+        });
+        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Fragment fragment = getFragmentManager().findFragmentById(R.id.content);
+                if (fragment == localeListEditor || fragment == timeFragment) {
+                    setView();
+                }
             }
         });
     }
@@ -487,22 +428,18 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             case CHOOSE_KEYBOARD:
                 gotoVirtualKeyboard();
                 break;
-//            case CHOOSE_APP:
-//                gotoAppFragment();
-//                break;
             case CHOOSE_LOCATION:
                 gotoGpsFragment();
                 break;
             case CHOOSE_TIME:
                 gotoTimeFragment();
+                break;
+            case CHOOSE_APP:
+                gotoAppFragment();
         }
     }
 
     private void finishSetUpWizard() {
-        Log.e(TAG, "finishSetUpWizard start");
-
-        SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.putBoolean(AVAILABLE, true).commit();
 
         Settings.Global.putString(getContentResolver(), Settings.Global.DEVICE_NAME, "OpenFDE device");
         Settings.Global.putInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 1);
@@ -510,16 +447,13 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
         // remove this activity from the package manager.
         PackageManager pm = getPackageManager();
-        ComponentName name = new ComponentName("com.android.oobe", "com.android.oobe.LanguageActivity");
-//        ComponentName name = new ComponentName(this, LanguageActivity.class);
-//        ComponentName name = new ComponentName(getApplicationContext(), LanguageActivity.class);
+        ComponentName name = new ComponentName(this, LanguageActivity.class);
         pm.setComponentEnabledSetting(name, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-        Log.e(TAG, "finishSetUpWizard success");
         finish();
     }
 
     public void setView() {
-        if (state == 1) {
+        if (state == CHOOSE_LANGUAGE) {
             // Set directionColor
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_color);
@@ -539,7 +473,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                     44,
                     this.getResources().getDisplayMetrics()
             );
+            mReturn.setVisibility(View.GONE);
             mPrevBtn.setVisibility(View.GONE);
+            mNextBtn.setVisibility(View.VISIBLE);
             mNextBtn.setLayoutParams(params);
             mNextBtn.setBackgroundResource(R.drawable.next_button_init);
             mNextBtn.setText(R.string.next_button_text);
@@ -549,7 +485,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
             // Set Language Hint
             mLanguageHint.setVisibility(View.VISIBLE);
-        } else if (state == 2) {
+        } else if (state == CHOOSE_KEYBOARD) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_marked_color);
             direction3.setBackgroundResource(R.color.direction_color);
@@ -567,7 +503,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                     44,
                     this.getResources().getDisplayMetrics()
             );
+            mReturn.setVisibility(View.GONE);
             mPrevBtn.setVisibility(View.VISIBLE);
+            mNextBtn.setVisibility(View.VISIBLE);
             mNextBtn.setLayoutParams(params);
             mNextBtn.setBackgroundResource(R.drawable.next_button);
             mNextBtn.setText(R.string.next_button_text);
@@ -575,50 +513,86 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
             mLanguageTitle.setText(R.string.keyboard_panel_text);
 
             mLanguageHint.setVisibility(View.INVISIBLE);
-        } else if (state == 3) {
+        } else if (state == CHOOSE_LOCATION) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_marked_color);
             direction3.setBackgroundResource(R.color.direction_marked_color);
             direction4.setBackgroundResource(R.color.direction_color);
             direction5.setBackgroundResource(R.color.direction_color);
 
-//            mLanguageTitle.setText(R.string.application_panel_text);
-
-
+            mReturn.setVisibility(View.GONE);
+            mPrevBtn.setVisibility(View.VISIBLE);
+            mNextBtn.setVisibility(View.VISIBLE);
             mNextBtn.setText(R.string.next_button_text);
+
             mLanguageTitle.setText(R.string.location_panel_text);
-        } else if (state == 4) {
+        } else if (state == CHOOSE_TIME) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_marked_color);
             direction3.setBackgroundResource(R.color.direction_marked_color);
             direction4.setBackgroundResource(R.color.direction_marked_color);
             direction5.setBackgroundResource(R.color.direction_color);
 
-//            mNextBtn.setBackgroundResource(R.drawable.next_button);
-//            mNextBtn.setText(R.string.next_button_text);
-//            mLanguageTitle.setText(R.string.location_panel_text);
+            mReturn.setVisibility(View.GONE);
+            mPrevBtn.setVisibility(View.VISIBLE);
+            mNextBtn.setVisibility(View.VISIBLE);
+            mNextBtn.setText(R.string.next_button_text);
 
-
-            mNextBtn.setText(R.string.done_button_text);
             mLanguageTitle.setText(R.string.time_panel_text);
-            languageListener.showAndHideButton(View.VISIBLE);
-        } else if (state == 5) {
+        } else if (state == CHOOSE_APP) {
             direction1.setBackgroundResource(R.color.direction_marked_color);
             direction2.setBackgroundResource(R.color.direction_marked_color);
             direction3.setBackgroundResource(R.color.direction_marked_color);
             direction4.setBackgroundResource(R.color.direction_marked_color);
             direction5.setBackgroundResource(R.color.direction_marked_color);
 
-            languageListener.showAndHideButton(View.VISIBLE);
-//            mNextBtn.setBackgroundResource(R.drawable.done_button);
-            mNextBtn.setText(R.string.done_button_text);
+            mReturn.setVisibility(View.GONE);
+            mPrevBtn.setVisibility(View.VISIBLE);
+            mNextBtn.setVisibility(View.VISIBLE);
+            if ((singleton.hasNetworkRequestSucceeded() && singleton.isNothingSelected()) || (appFragment != null && ((AppFragment) appFragment).isDownloadFragment())) {
+                mNextBtn.setText(R.string.done_button_text);
+            } else {
+                mNextBtn.setText(R.string.start_download);
+            }
 
-            mLanguageTitle.setText(R.string.time_panel_text);
+            mLanguageTitle.setText(R.string.application_panel_text);
         }
     }
 
-    @Override
-    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+    private void showConfirmationDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.layout_dialog, null);
+
+        TextView downloadTxt = dialogView.findViewById(R.id.tv_download);
+        TextView proceedTxt = dialogView.findViewById(R.id.tv_proceed);
+
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.width = (int) (getResources().getDisplayMetrics().widthPixels * 0.215);
+        params.gravity = Gravity.CENTER;
+        params.y = 25;
+        dialog.getWindow().setAttributes(params);
+
+        downloadTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        proceedTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                finishSetUpWizard();
+            }
+        });
+
     }
 
     public interface LanguageListener {

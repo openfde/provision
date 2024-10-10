@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="@color/all_bg"
-        android:elevation="2dp"
         android:gravity="center_vertical"
         android:hint="Search Region"
         android:maxLines="1"

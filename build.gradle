@@ -16,6 +16,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -29,4 +30,3 @@ ext {
     targetApi = properties.get('TARGET_API', 30)
     minApi = properties.get('MIN_API', 26)
 }
-

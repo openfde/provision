@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.android.oobe"
     android:sharedUserId="android.uid.system">
+
     <!-- For miscellaneous settings -->
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.STATUS_BAR" />
@@ -29,24 +30,33 @@
     <uses-permission android:name="android.permission.WRITE_APN_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:label="@string/app_name"
         tools:targetApi="31">
-
-
-
+        <service
+            android:name=".application.net.DownloadService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
 
         <activity
-            android:name="com.android.oobe.LanguageActivity"
+            android:name=".LanguageActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:immersive="true"
-            android:theme="@style/Theme.Provision"
             android:label="@string/app_name"
-            android:resizeableActivity="true">
+            android:resizeableActivity="true"
+            android:theme="@style/Theme.Provision">
             <intent-filter android:priority="1">
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,14 +66,31 @@
                 <category android:name="android.intent.category.SETUP_WIZARD" />
             </intent-filter>
 
-<!--            <layout-->
-<!--                android:defaultWidth="700dp"-->
-<!--                android:defaultHeight="950dp"-->
-<!--                android:gravity="center" />-->
+            <!-- <layout -->
+            <!-- android:defaultWidth="700dp" -->
+            <!-- android:defaultHeight="950dp" -->
+            <!-- android:gravity="center" /> -->
         </activity> <!-- Choose language -->
         <activity
-            android:name="com.android.oobe.DefaultActivity"
-            android:exported="true" />
+            android:name=".DefaultActivity"
+            android:exported="true">
+
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
+
+        <receiver android:name=".application.installer.InstallResultReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.PACKAGE_INSTALL" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

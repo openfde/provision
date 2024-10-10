@@ -260,4 +260,12 @@
     <dimen name="webview_height_land">135dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
+    <!-- dialog rounded -->
+    <dimen name="rounded_corner">12dp</dimen>
+    <dimen name="rounded_corner_top_left">16dp</dimen>
+    <dimen name="rounded_corner_bottom_right">16dp</dimen>
+    <dimen name="rounded_corner_bottom_left">8dp</dimen>
+    <dimen name="rounded_corner_top_right">8dp</dimen>
+
+
 </resources>

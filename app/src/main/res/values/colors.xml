@@ -17,6 +17,7 @@
     <color name="suw_link_color_light">#ff3367d6</color>
     <color name="suw_progress_bar_color_dark">#ffffcd40</color>
     <color name="suw_progress_bar_color_light">#fff4b400</color>
+    <color name="main_blue">#409EFF</color>
 
     <!-- Navigation bar colors -->
 
@@ -77,4 +78,7 @@
     <color name="password_connect_color">#E6333F</color>
 
     <color name="colorAccent">#ffe7333f</color>
+
+    <color name="download_button_color">#59409EFF</color>
+
 </resources>
