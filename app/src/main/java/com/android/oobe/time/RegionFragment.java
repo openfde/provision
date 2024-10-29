@@ -54,7 +54,6 @@ public class RegionFragment extends Fragment {
 
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mRegionSearchAdapter = new RegionSearchAdapter(transform(TimeZoneProvider.getRegionInfoList(getContext())), languageListener);
-        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mRegionSearchAdapter);
 

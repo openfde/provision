@@ -2,6 +2,7 @@ package com.android.oobe;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -31,7 +32,7 @@ public class BaseSonFragment extends Fragment {
     public Animator onCreateAnimator(int transit, boolean enter, int nextAnim) {
         final Fragment parent = getParentFragment();
         if (!enter && parent != null && parent.isRemoving()) {
-            ObjectAnimator doNothingAnimator = ObjectAnimator.ofFloat(this, "alpha", 1f, 1f);
+            @SuppressLint("ObjectAnimatorBinding") ObjectAnimator doNothingAnimator = ObjectAnimator.ofFloat(this, "alpha", 1f, 1f);
             doNothingAnimator.setDuration(getNextAnimationDuration(parent, DEFAULT_CHILD_ANIMATION_DURATION));
             return doNothingAnimator;
         } else {

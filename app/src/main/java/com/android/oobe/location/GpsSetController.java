@@ -41,6 +41,7 @@ import android.app.Activity;
 
 import com.android.oobe.R;
 import com.android.oobe.Utils;
+import com.android.oobe.exception.ColumnNotFoundException;
 
 public class GpsSetController {
     public static final String REGION_URI = "content://com.boringdroid.systemuiprovider.region";
@@ -329,10 +330,10 @@ public class GpsSetController {
                 list = new ArrayList<>();
                 do {
                     if (isChineseLanguage) {
-                        String COUNTRY_NAME = cursor.getString(cursor.getColumnIndex("COUNTRY_NAME"));
+                        String COUNTRY_NAME = getStringFromCursor(cursor, "COUNTRY_NAME");
                         list.add(COUNTRY_NAME);
                     } else {
-                        String COUNTRY_NAME_EN = cursor.getString(cursor.getColumnIndex("COUNTRY_NAME_EN"));
+                        String COUNTRY_NAME_EN = getStringFromCursor(cursor, "COUNTRY_NAME_EN");
                         list.add(COUNTRY_NAME_EN);
                     }
 
@@ -368,10 +369,10 @@ public class GpsSetController {
                 list = new ArrayList<>();
                 do {
                     if (isChineseLanguage) {
-                        String PROVINCE_NAME = cursor.getString(cursor.getColumnIndex("PROVINCE_NAME"));
+                        String PROVINCE_NAME = getStringFromCursor(cursor, "PROVINCE_NAME");
                         list.add(PROVINCE_NAME);
                     } else {
-                        String PROVINCE_NAME_EN = cursor.getString(cursor.getColumnIndex("PROVINCE_NAME_EN"));
+                        String PROVINCE_NAME_EN = getStringFromCursor(cursor, "PROVINCE_NAME_EN");
                         list.add(PROVINCE_NAME_EN);
                     }
 
@@ -407,14 +408,14 @@ public class GpsSetController {
             if (cursor != null && cursor.moveToFirst()) {
                 list = new ArrayList<>();
                 do {
-                    String CITY_ID = cursor.getString(cursor.getColumnIndex("CITY_ID"));
-                    String GPS = cursor.getString(cursor.getColumnIndex("GPS"));
+                    String CITY_ID = getStringFromCursor(cursor, "CITY_ID");
+                    String GPS = getStringFromCursor(cursor, "GPS");
                     listCityGps.add(GPS);
                     if (isChineseLanguage) {
-                        String CITY_NAME = cursor.getString(cursor.getColumnIndex("CITY_NAME"));
+                        String CITY_NAME = getStringFromCursor(cursor, "CITY_NAME");
                         list.add(CITY_NAME);
                     } else {
-                        String CITY_NAME_EN = cursor.getString(cursor.getColumnIndex("CITY_NAME_EN"));
+                        String CITY_NAME_EN = getStringFromCursor(cursor, "CITY_NAME_EN");
                         list.add(CITY_NAME_EN);
                     }
 
@@ -480,5 +481,13 @@ public class GpsSetController {
                 rootView = itemView.findViewById(R.id.rootView);
             }
         }
+    }
+
+    public static String getStringFromCursor(Cursor cursor, String columnName) throws ColumnNotFoundException {
+        int columnIndex = cursor.getColumnIndex(columnName);
+        if (columnIndex == -1) {
+            throw new ColumnNotFoundException("Column '" + columnName + "' not found in cursor.");
+        }
+        return cursor.getString(columnIndex);
     }
 }
