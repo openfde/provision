@@ -17,6 +17,12 @@ import androidx.annotation.Nullable;
 import com.android.oobe.LanguageActivity;
 import com.android.oobe.R;
 
+/**
+ * TimeZoneFragment is an Android Fragment that manages and displays the region and time zone settings.
+ * It listens for changes in the time zone via a BroadcastReceiver and updates the display accordingly.
+ * Users can click on the region and time zone to open selection dialogs, with options dynamically adjusted based on available region zones.
+ * The setView method updates the displayed region and zone names using TimeZoneProvider.
+ */
 public class TimeZoneFragment extends Fragment {
     private LanguageActivity.LanguageListener mLanguageListener;
     private LinearLayout region;

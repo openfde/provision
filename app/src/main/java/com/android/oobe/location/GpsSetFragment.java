@@ -3,7 +3,6 @@ package com.android.oobe.location;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,11 @@ import androidx.annotation.Nullable;
 
 import com.android.oobe.R;
 
+/**
+ * GpsSetFragment is an Android Fragment responsible for configuring GPS settings within an application.
+ * It initializes a GpsSetController to manage GPS functionality and bind it to the provided view.
+ * When the fragment stops, it calls setGps() on GpsSetController to apply the GPS settings.
+ **/
 public class GpsSetFragment extends Fragment {
     private static final String TAG = "GpsSetFragment";
     GpsSetController gpsSetController;

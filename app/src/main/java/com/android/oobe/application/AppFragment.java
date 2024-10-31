@@ -3,7 +3,6 @@ package com.android.oobe.application;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,11 @@ import android.widget.FrameLayout;
 import androidx.annotation.Nullable;
 
 import com.android.oobe.R;
-import com.android.oobe.application.model.AppDownloadInfo;
 
+/**
+ * The AppFragment class manages AppOptionFragment and AppDownloadFragment.
+ * It tracks the currently displayed Fragment using the state variable and switches between selection and download states.
+ */
 public class AppFragment extends Fragment {
     private final String TAG = "AppFragment";
     private final int APP_CHOOSE_STATE = 0;

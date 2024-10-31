@@ -25,6 +25,11 @@ import com.android.settingslib.datetime.ZoneGetter;
 
 import java.util.Calendar;
 
+/**
+ * TimeFragment is an Android Fragment designed to display and manage system time settings,
+ * including time format (12/24-hour) and time zone. It uses BroadcastReceiver to listen for time updates,
+ * refreshing the current time every minute, toggling the hour format, and enabling time zone selection through click events.
+ **/
 public class TimeFragment extends Fragment {
 
     private static final String HOURS_24 = "24";

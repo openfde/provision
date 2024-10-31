@@ -187,7 +187,7 @@ public class VirtualKeyboardFragment extends Fragment {
         }
     }
 
-    public static class InputMethodViewHolder extends RecyclerView.ViewHolder {
+    public class InputMethodViewHolder extends RecyclerView.ViewHolder {
 
         ImageView icon;
         TextView title;

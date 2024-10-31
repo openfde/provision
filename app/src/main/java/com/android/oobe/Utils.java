@@ -4,6 +4,7 @@ package com.android.oobe;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.View;
 
 import java.io.File;
@@ -11,8 +12,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import android.util.Base64;
-
 import java.util.Locale;
 
 public class Utils {
@@ -79,7 +78,11 @@ public class Utils {
         if (ojb == null) {
             return 0;
         } else {
-            return ToDouble(ojb).intValue();
+            try {
+                return ToDouble(ojb).intValue();
+            } catch (NumberFormatException e) {
+                return 0;
+            }
         }
     }
 
@@ -87,7 +90,11 @@ public class Utils {
         if (ojb == null) {
             return 0.0;
         } else {
-            return Double.valueOf(ToString(ojb));
+            try {
+                return Double.valueOf(ToString(ojb));
+            } catch (NumberFormatException e) {
+                return 0.0;
+            }
         }
     }
 

@@ -17,6 +17,13 @@ import com.android.oobe.R;
 
 import java.util.List;
 
+
+/**
+ * RegionZoneFragment is an Android Fragment that displays a list of time zones within a specific region, allowing users to select a time zone.
+ * If only one time zone is available, it is automatically saved, and the user is redirected to the main time settings.
+ * The fragment includes RegionZoneAdapter to populate a RecyclerView with items showing the name, summary, and current time of each time zone.
+ * When a time zone is selected, it is saved, and the user is taken back to the time settings through the LanguageListener.
+ */
 public class RegionZoneFragment extends Fragment {
     private String TAG = "RegionZoneFragment";
     private String mRegionId;

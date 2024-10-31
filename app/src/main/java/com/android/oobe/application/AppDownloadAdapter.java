@@ -3,7 +3,6 @@ package com.android.oobe.application;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,7 +133,7 @@ public class AppDownloadAdapter extends RecyclerView.Adapter<AppDownloadAdapter.
         notifyDataSetChanged();
     }
 
-    static class CustomViewHolder extends RecyclerView.ViewHolder {
+    class CustomViewHolder extends RecyclerView.ViewHolder {
         ImageView appIcon;
         TextView appName;
         ProgressBar appProgressBar;

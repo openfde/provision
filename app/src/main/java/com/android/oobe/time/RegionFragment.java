@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +24,15 @@ import java.util.List;
 
 import me.yokeyword.indexablerv.IndexableLayout;
 
+/**
+ * RegionFragment is an Android Fragment that displays a list of regions, allowing users to search for and select specific regions.
+ * It uses IndexableLayout to list regions alphabetically, while a search feature dynamically filters the list based on user input.
+ * When a user types into the search field, RecyclerView displays only matching items, hiding the full list in IndexableLayout.
+ * RegionFragment also includes a LanguageListener to manage interactions with region selections.
+ */
 public class RegionFragment extends Fragment {
     private String TAG = "RegionFragment";
     private EditText mSearchEdt;
-    private final int PADDING = 94;
     private RegionAdapter mRegionAdapter = new RegionAdapter();
     private IndexableLayout mIndexAbleLayout;
     private RecyclerView mRecyclerView;
@@ -45,7 +49,7 @@ public class RegionFragment extends Fragment {
 
         mIndexAbleLayout = view.findViewById(R.id.indexAbleLayout);
         mIndexAbleLayout.setLayoutManager(new LinearLayoutManager(getContext()));
-        //You must set up the adapter first, then set up the data
+        // You must set up the adapter first, then set up the data
         mIndexAbleLayout.setAdapter(mRegionAdapter);
         mRegionAdapter.setDatas(transform(TimeZoneProvider.getRegionInfoList(getContext())));
 
@@ -85,19 +89,15 @@ public class RegionFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        Utils.setFragmentPadding(view, 0, 0, 0, Utils.PADDING);
     }
 
     public void setLanguageListener(LanguageActivity.LanguageListener languageListener) {
         this.languageListener = languageListener;
-        Log.w(TAG, "regionAdapter" + mRegionAdapter);
         mRegionAdapter.setLanguageListener(languageListener);
     }
 
-
     private List<RegionEntity> transform(List<RegionInfo> regionInfoList) {
         List<RegionEntity> regionEntityList = new ArrayList<>();
-        Log.w(TAG, "regionInfoList.size() = " + regionInfoList.size());
         for (RegionInfo regionInfo : regionInfoList) {
             regionEntityList.add(new RegionEntity(regionInfo));
         }

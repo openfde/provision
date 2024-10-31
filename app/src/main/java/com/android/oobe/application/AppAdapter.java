@@ -57,7 +57,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ApplicationHolde
         return appDownloadInfoList.size();
     }
 
-    static class ApplicationHolder extends RecyclerView.ViewHolder {
+    class ApplicationHolder extends RecyclerView.ViewHolder {
         ImageView applicationIcon;
         TextView applicationName;
         ImageView checkedIcon;

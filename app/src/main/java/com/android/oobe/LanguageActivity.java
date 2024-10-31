@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.provider.Settings;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -50,6 +49,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Locale;
+
+/**
+ * LanguageActivity is an Android Activity that serves as a setup wizard for configuring device language and related settings.
+ * It implements LocalePickerWithRegion.LocaleSelectedListener to handle locale selections.
+ * The activity manages multiple fragments for language, keyboard, location, time, and applications, navigating between them based on user input.
+ * It also binds to a DownloadService for handling downloads and shows a confirmation dialog when necessary.
+ * The user can navigate back and forth between these settings and complete the setup process by saving the configurations.
+ */
 
 public class LanguageActivity extends Activity implements LocalePickerWithRegion.LocaleSelectedListener {
 
@@ -129,7 +136,6 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         }
 
     };
-
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override

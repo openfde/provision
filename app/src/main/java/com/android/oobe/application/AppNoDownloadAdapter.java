@@ -82,7 +82,7 @@ public class AppNoDownloadAdapter extends RecyclerView.Adapter<AppNoDownloadAdap
         notifyDataSetChanged();
     }
 
-    static class CustomViewHolder extends RecyclerView.ViewHolder {
+    class CustomViewHolder extends RecyclerView.ViewHolder {
         ImageView appIcon;
         TextView appName;
         Button downloadBtn;

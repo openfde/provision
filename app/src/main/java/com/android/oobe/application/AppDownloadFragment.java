@@ -1,16 +1,11 @@
 package com.android.oobe.application;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +30,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+/**
+ * The AppDownloadFragment class manages the user interface for application downloads, using two RecyclerViews to display currently downloading and not downloading applications.
+ * It utilizes an event bus (EventBus) to receive updates on download status, such as start, progress, stop, and completion.
+ * The class includes methods to handle these state updates and interacts with DownloadService to perform download and installation operations.
+ * Additionally, it checks the network connection status to ensure a smooth download process.
+ */
 public class AppDownloadFragment extends BaseSonFragment {
     private final String TAG = "AppDownloadFragment";
     private final boolean IS_SELECTED = true;
