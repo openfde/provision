@@ -17,6 +17,7 @@
     <color name="suw_link_color_light">#ff3367d6</color>
     <color name="suw_progress_bar_color_dark">#ffffcd40</color>
     <color name="suw_progress_bar_color_light">#fff4b400</color>
+    <color name="main_blue">#409EFF</color>
 
     <!-- Navigation bar colors -->
 
@@ -38,10 +39,21 @@
     <color name="legal_checkbox_text">#2d2d2d</color>
     <color name="link_text_color">#ff009688</color>
 
-    <color name="next_button_color">#ffE6333F</color>
-    <color name="next_button_disable_color">#99E6333F</color>
-    <color name="next_button_pressed_color">#FFC72B36</color>
+    <color name="next_button_color">#409EFF</color>
+    <color name="next_button_disable_color">#B3409EFF</color>
+    <color name="next_button_pressed_color">#3A8EE6</color>
+    <color name="next_button_hovered_color">#66B1FF</color>
     <color name="show_text_color">#ff333333</color>
+
+    <color name="prev_button_color">#909399</color>
+    <color name="prev_button_disable_color">#B3909399</color>
+    <color name="prev_button_pressed_color">#82848A</color>
+    <color name="prev_button_hovered_color">#A6A9AD</color>
+
+    <color name="done_button_color">#67C23A</color>
+    <color name="done_button_disable_color">#B367C23A</color>
+    <color name="done_button_pressed_color">#5DAF34</color>
+    <color name="done_button_hovered_color">#85CE61</color>
 
     <color name="panel_title_color">#ff333333</color>
     <color name="panel_background_color">#FFEDEDED</color>
@@ -56,6 +68,7 @@
     <color name="direction_color">#ffCCCCCC</color>
     <color name="connected_ssid_color">#ff333333</color>
     <color name="connected_state_color">#ff999999</color>
+    <color name="language_hint_color">#ff999999</color>
 
     <color name="colorPasswordBackground">#eeeeee</color>
     <color name="ssidColor">#333333</color>
@@ -65,4 +78,7 @@
     <color name="password_connect_color">#E6333F</color>
 
     <color name="colorAccent">#ffe7333f</color>
+
+    <color name="download_button_color">#59409EFF</color>
+
 </resources>

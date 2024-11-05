@@ -6,17 +6,17 @@
             <!--填充色-->
             <solid android:color="@color/next_button_disable_color"/>
             <!--圆角-->
-            <corners android:radius="3dp"/>
+            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
         </shape>
-        
+
     </item>
     <item android:state_pressed="true">
-            
+
         <shape xmlns:android="http://schemas.android.com/apk/res/android" android:useLevel="false">
             <!--填充色-->
             <solid android:color="@color/next_button_pressed_color"/>
             <!--圆角-->
-            <corners android:radius="3dp"/>
+            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
         </shape>
         
     </item>
@@ -27,9 +27,18 @@
             <!--填充色-->
             <solid android:color="@color/next_button_color"/>
             <!--圆角-->
-            <corners android:radius="3dp"/>
+            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
         </shape>
         
+    </item>
+
+    <item android:state_hovered="true">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:useLevel="false">
+            <!--填充色-->
+            <solid android:color="@color/next_button_hovered_color"/>
+            <!--圆角-->
+            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
+        </shape>
     </item>
 
     <item>
@@ -38,9 +47,9 @@
             <!--填充色-->
             <solid android:color="@color/next_button_color"/>
             <!--圆角-->
-            <corners android:radius="3dp"/>
+            <corners android:bottomRightRadius="6dp" android:topRightRadius="6dp"/>
         </shape>
-        
+
     </item>
 
 </selector>

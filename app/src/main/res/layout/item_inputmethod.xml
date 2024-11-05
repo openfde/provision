@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="60dp"
+    android:background="?android:attr/selectableItemBackground">
 
 
     <ImageView
@@ -24,7 +25,7 @@
         android:textColor="@color/black"
         />
 
-    <com.android.provision.ToggleSwitch
+    <com.android.oobe.language.ToggleSwitch
         android:id="@+id/switch_toggle"
         android:layout_width="46dp"
         android:layout_alignParentRight="true"
