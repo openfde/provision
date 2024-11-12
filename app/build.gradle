@@ -21,9 +21,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.debug
+          //  signingConfig signingConfigs.debug
         }
         debug {
 //            applicationIdSuffix '.debug'
@@ -34,7 +34,7 @@ android {
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             if (outputFile != null && outputFileName.endsWith('.apk')) {
-                outputFileName = "provision.apk"
+                outputFileName = "OOBE.apk"
             }
         }
         def buildType = variant.buildType.name
