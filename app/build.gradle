@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 34
     buildToolsVersion "30.0.3"
 
     defaultConfig {
@@ -21,9 +21,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.debug
+          //  signingConfig signingConfigs.debug
         }
         debug {
 //            applicationIdSuffix '.debug'
@@ -77,6 +77,8 @@ repositories {
     }
 }
 
+def room_version = "2.5.2"
+
 dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
@@ -94,5 +96,8 @@ dependencies {
 
     implementation files('libs/settingslib.jar')
     compileOnly files('libs/framework.jar')
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version" // 如果使用 Java
 
 }

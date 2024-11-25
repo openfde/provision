@@ -188,6 +188,12 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         switchListen();
         gotoFragment();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Utils.parseGpsData(LanguageActivity.this);
+            }
+        }).start();
     }
 
     public DownloadService getDownloadService() {

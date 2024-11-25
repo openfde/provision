@@ -95,6 +95,11 @@
             -->
         </activity>
 
+        <provider
+            android:name=".provider.RegionContentProvider"
+            android:authorities="com.android.oobe.region"
+            android:exported="true" />
+
         <receiver android:name=".application.installer.InstallResultReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
