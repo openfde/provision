@@ -206,6 +206,8 @@ public class GpsSetController {
             @Override
             public void setOnItemClick(int pos) {
                 indexCountry = pos ;
+                indexProvince = 0 ;
+                indexCity = 0;
                 popWindow.dismiss();
                 listProvinces.clear();
                 queryProvincesByCountry(listCountrys.get(pos), pos);
@@ -215,6 +217,7 @@ public class GpsSetController {
             @Override
             public void setOnItemClick(int pos) {
                 indexProvince = pos ;
+                indexCity = 0;
                 txtProvince.setText(listProvinces.get(pos));
                 popWindow.dismiss();
                 listCitys.clear();
