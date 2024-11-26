@@ -1,54 +1,48 @@
 package com.android.oobe.location;
 
-import android.util.Log;
-import android.view.View;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import android.net.Uri;
-import android.database.Cursor;
-import android.content.ContentResolver;
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import android.graphics.drawable.ColorDrawable;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 import android.net.LocalSocketAddress.Namespace;
-import java.io.OutputStream;
-
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
-import android.widget.PopupWindow;
-import android.annotation.SuppressLint;
-import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.widget.PopupWindowCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.app.Activity;
 
+import com.android.oobe.BaseDataBase;
 import com.android.oobe.R;
 import com.android.oobe.Utils;
-import com.android.oobe.exception.ColumnNotFoundException;
+import com.android.oobe.application.model.RegionInfo;
+
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class GpsSetController {
-    public static final String REGION_URI = "content://com.boringdroid.systemuiprovider.region";
     private static final String TAG = "GpsSetController";
 
     ImageView imgSave;
-
     TextView txtCountry;
     TextView txtProvince;
     TextView txtCity;
@@ -58,6 +52,7 @@ public class GpsSetController {
     List<String> listProvinces;
     List<String> listCitys;
 
+    List<RegionInfo> listAddress;
     List<String> listCityGps;
 
     Context context;
@@ -75,6 +70,10 @@ public class GpsSetController {
     SimpleAdapter adapterProvince;
     SimpleAdapter adapterCity;
 
+    private static final int MSG_COURTY = 1001;
+    private static final int MSG_PROVINCE = 1002;
+    private static final int MSG_CITY = 1003;
+
     public GpsSetController(Activity activity, View rootView) {
         this.context = activity;
         this.activity = activity;
@@ -82,6 +81,63 @@ public class GpsSetController {
         isChineseLanguage = Utils.isChineseLanguage(context);
         initData();
     }
+
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_COURTY:
+                    if (listCountrys != null) {
+                        Log.w(TAG, "bella listCountrys  = " + listCountrys.toString());
+                        adapterCountry.notifyDataSetChanged();
+                        txtCountry.setText(listCountrys.get(indexCountry));
+                        if (listCountrys.size() > 0) {
+                            queryProvincesByCountry(listCountrys.get(indexCountry), indexCountry);
+                        }
+                    } else {
+                        listCountrys = new ArrayList<>();
+                        adapterCountry.notifyDataSetChanged();
+                    }
+                    break;
+
+                case MSG_PROVINCE:
+                    txtCountry.setText(listCountrys.get(indexCountry));
+
+                    if (listProvinces != null) {
+                        Log.w(TAG, "bella Provinces , indexProvince: " + indexProvince);
+                        Log.w(TAG, "bella listProvinces  = " + listProvinces.toString());
+                        txtProvince.setText(listProvinces.get(indexProvince));
+                        adapterProvince.notifyDataSetChanged();
+                        queryCitysByProvince(listProvinces.get(0), 0);
+                    } else {
+                        listProvinces = new ArrayList<>();
+                        adapterProvince.notifyDataSetChanged();
+                    }
+
+
+                    break;
+
+                case MSG_CITY:
+                    txtProvince.setText(listProvinces.get(indexProvince));
+                    if (listCitys != null) {
+                        Log.w(TAG, "bella city, indexCity: " + indexCity);
+                        Log.w(TAG, "bella listCitys  = " + listCitys.toString());
+                        txtCity.setText(listCitys.get(indexCity));
+                        adapterCity.notifyDataSetChanged();
+                        gpsValue = listAddress.get(indexCity).getGps();
+                    } else {
+                        listCitys = new ArrayList<>();
+                        adapterCity.notifyDataSetChanged();
+                    }
+
+                    break;
+
+            }
+
+        }
+    };
 
     private void initView(View rootView) {
 //        imgSave = (ImageView) rootView.findViewById(R.id.imgSave);
@@ -126,7 +182,11 @@ public class GpsSetController {
         String locationGps = indexCountry + "~" + indexProvince + "~"
                 + indexCity;
         Settings.Global.putString(context.getContentResolver(), "locationGps", locationGps);
-        Log.w(TAG, "gpsValue = " + gpsValue);
+        String locationGpsInfo = listCountrys.get(indexCountry) + "~" + listProvinces.get(indexProvince) + "~"
+                + listCitys.get(indexCity);
+        Settings.Global.putString(context.getContentResolver(), "locationGpsInfo", locationGpsInfo);
+        Log.w(TAG, "bella locationGps " + locationGps + ", locationGpsInfo = " + locationGpsInfo);
+
         value = value.replace("\n", "").trim();
         String address = "/tmp/unix.str";
         LocalSocket clientSocket = new LocalSocket();
@@ -155,67 +215,36 @@ public class GpsSetController {
         listCountrys = new ArrayList<>();
         listProvinces = new ArrayList<>();
         listCitys = new ArrayList<>();
-
+        listAddress = new ArrayList<>();
         adapterCountry = new SimpleAdapter(context, listCountrys, new SimpleAdapter.ItemClick() {
             @Override
             public void setOnItemClick(int pos) {
-                txtCountry.setText(listCountrys.get(pos));
+                indexCountry = pos ;
                 popWindow.dismiss();
                 listProvinces.clear();
-                List<String> tempPList = queryProvincesByCountry(listCountrys.get(pos));
-                if (tempPList != null) {
-                    listProvinces.addAll(tempPList);
-                    adapterProvince.notifyDataSetChanged();
-
-                    if (pos != indexCountry) {
-                        txtProvince.setText(listProvinces.get(0));
-                    }
-                    indexCountry = pos;
-                    List<String> tempCList = queryCitysByProvince(listProvinces.get(0));
-                    if (tempCList != null) {
-                        listCitys.clear();
-                        listCitys.addAll(tempCList);
-                        adapterCity.notifyDataSetChanged();
-                    }
-                }
+                queryProvincesByCountry(listCountrys.get(pos), pos);
             }
         });
         adapterProvince = new SimpleAdapter(context, listProvinces, new SimpleAdapter.ItemClick() {
             @Override
             public void setOnItemClick(int pos) {
+                indexProvince = pos ;
                 txtProvince.setText(listProvinces.get(pos));
                 popWindow.dismiss();
                 listCitys.clear();
-                List<String> tempCList = queryCitysByProvince(listProvinces.get(pos));
-                if (tempCList != null) {
-                    listCitys.addAll(tempCList);
-                    adapterCity.notifyDataSetChanged();
-                    if (pos != indexProvince) {
-                        txtCity.setText(listCitys.get(0));
-                    }
-                    indexProvince = pos;
-                }
+                queryCitysByProvince(listProvinces.get(pos), pos);
             }
         });
         adapterCity = new SimpleAdapter(context, listCitys, new SimpleAdapter.ItemClick() {
             @Override
             public void setOnItemClick(int pos) {
+                indexCity = pos ;
                 txtCity.setText(listCitys.get(pos));
                 popWindow.dismiss();
-                gpsValue = listCityGps.get(pos);
-                indexCity = pos;
+                gpsValue = listAddress.get(pos).getGps();
             }
         });
 
-//        imgSave.setOnClickListener(view -> {
-//            // String locationGps = spCountry.getSelectedItemId() + "~" +
-//            // spProvince.getSelectedItemId() + "~"
-//            // + spCity.getSelectedItemId();
-//            String locationGps = indexCountry + "~" + indexProvince + "~"
-//                    + indexCity;
-//            Settings.Global.putString(context.getContentResolver(), "locationGps", locationGps);
-//            setGps(gpsValue);
-//        });
 
         String locationGps = Settings.Global.getString(context.getContentResolver(), "locationGps");
 //        LogTools.i("locationGps: " + locationGps);
@@ -230,36 +259,7 @@ public class GpsSetController {
             }
         }
 
-        try {
-//            LogTools.i("queryAllCountry  indexCountry: " + indexCountry + ",indexProvince: " + indexProvince
-//                    + ",indexCity:"
-//                    + indexCity);
-            List<String> tempList = queryAllCountry();
-            if (tempList != null) {
-                listCountrys.addAll(queryAllCountry());
-                adapterCountry.notifyDataSetChanged();
-
-                if (tempList.size() > 0) {
-                    List<String> tempPList = queryProvincesByCountry(listCountrys.get(indexCountry));
-                    if (tempPList != null) {
-                        listProvinces.addAll(tempPList);
-                        adapterProvince.notifyDataSetChanged();
-
-                        List<String> tempCList = queryCitysByProvince(listProvinces.get(indexProvince));
-                        if (tempCList != null) {
-                            listCitys.addAll(tempCList);
-                            adapterCity.notifyDataSetChanged();
-                            txtCountry.setText(listCountrys.get(indexCountry));
-                            txtProvince.setText(listProvinces.get(indexProvince));
-                            txtCity.setText(listCitys.get(indexCity));
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        queryAllCountry();
     }
 
     private PopupWindow popWindow;
@@ -316,121 +316,86 @@ public class GpsSetController {
 
     }
 
-    private List<String> queryAllCountry() {
-        Uri uri = Uri.parse(REGION_URI + "/REGION_COUNTRY");
-        Cursor cursor = null;
-        Map<String, Object> result = null;
-        String selection = null;
-        String[] selectionArgs = null;
-        List<String> list = null;
+    private void queryAllCountry() {
         try {
-            ContentResolver contentResolver = context.getContentResolver();
-            cursor = contentResolver.query(uri, null, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                list = new ArrayList<>();
-                do {
-                    if (isChineseLanguage) {
-                        String COUNTRY_NAME = getStringFromCursor(cursor, "COUNTRY_NAME");
-                        list.add(COUNTRY_NAME);
-                    } else {
-                        String COUNTRY_NAME_EN = getStringFromCursor(cursor, "COUNTRY_NAME_EN");
-                        list.add(COUNTRY_NAME_EN);
+            listCountrys.clear();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (isChineseLanguage) {
+                            listCountrys.addAll(BaseDataBase.getInstance(context).regionDao().getAllZhCoutry());
+                        } else {
+                            listCountrys.addAll(BaseDataBase.getInstance(context).regionDao().getAllEnCoutry());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    Log.w(TAG, "bella listCountrys size = " + listCountrys.size());
 
-                } while (cursor.moveToNext());
-            }
+                    Message msg = new Message();
+                    msg.what = MSG_COURTY;
+                    msg.arg1 = indexCountry;
+                    handler.sendMessage(msg);
 
+                }
+            }).start();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
-        if (list == null || list.isEmpty()) queryAllCountry();
-        return list;
     }
 
-    private List<String> queryProvincesByCountry(String countryName) {
-        Uri uri = Uri.parse(REGION_URI + "/REGION_PROVINCE");
-        Cursor cursor = null;
-        Map<String, Object> result = null;
-        String selection = "COUNTRY_NAME = ?";
-        if (!isChineseLanguage) {
-            selection = "COUNTRY_NAME_EN = ?";
-        }
-        String[] selectionArgs = { countryName };
-        List<String> list = null;
-
-        try {
-            ContentResolver contentResolver = context.getContentResolver();
-            cursor = contentResolver.query(uri, null, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                list = new ArrayList<>();
-                do {
+    private void queryProvincesByCountry(String countryName, int pos) {
+        listProvinces.clear();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
                     if (isChineseLanguage) {
-                        String PROVINCE_NAME = getStringFromCursor(cursor, "PROVINCE_NAME");
-                        list.add(PROVINCE_NAME);
+                        listProvinces.addAll(BaseDataBase.getInstance(context).regionDao().getAllZhProvincesByCoutryId(countryName));
                     } else {
-                        String PROVINCE_NAME_EN = getStringFromCursor(cursor, "PROVINCE_NAME_EN");
-                        list.add(PROVINCE_NAME_EN);
+                        listProvinces.addAll(BaseDataBase.getInstance(context).regionDao().getAllEnProvincesByCoutryId(countryName));
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Log.w(TAG, "bella listProvinces size = " + listProvinces.size());
 
-                } while (cursor.moveToNext());
-            }
+                Message msg = new Message();
+                msg.arg1 = pos;
+                msg.what = MSG_PROVINCE;
+                handler.sendMessage(msg);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
             }
-        }
-        if (list == null || list.isEmpty()) queryProvincesByCountry(countryName);
-        return list;
+        }).start();
     }
 
-    private List<String> queryCitysByProvince(String province) {
-        Uri uri = Uri.parse(REGION_URI + "/REGION_INFO");
-        Cursor cursor = null;
-        Map<String, Object> result = null;
-        String selection = "PROVINCE_NAME = ?";
-        if (!isChineseLanguage) {
-            selection = "PROVINCE_NAME_EN = ?";
-        }
-        String[] selectionArgs = { province };
-        List<String> list = null;
-        listCityGps = new ArrayList<>();
+    private void queryCitysByProvince(String province, int pos) {
+        listAddress.clear();
+        listCitys.clear();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    listAddress.addAll(BaseDataBase.getInstance(context).regionDao().getAllCitysByProvinceId(province));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Log.w(TAG, "bella listAddress size = " + listAddress.size());
 
-        try {
-            ContentResolver contentResolver = context.getContentResolver();
-            cursor = contentResolver.query(uri, null, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                list = new ArrayList<>();
-                do {
-                    String CITY_ID = getStringFromCursor(cursor, "CITY_ID");
-                    String GPS = getStringFromCursor(cursor, "GPS");
-                    listCityGps.add(GPS);
-                    if (isChineseLanguage) {
-                        String CITY_NAME = getStringFromCursor(cursor, "CITY_NAME");
-                        list.add(CITY_NAME);
-                    } else {
-                        String CITY_NAME_EN = getStringFromCursor(cursor, "CITY_NAME_EN");
-                        list.add(CITY_NAME_EN);
-                    }
+                if (listAddress != null) {
+                    listCitys.addAll(listAddress.stream()
+                            .map(address -> isChineseLanguage ? address.getCityName() : address.getCityNameEn())
+                            .collect(Collectors.toList()));
+                }
 
-                } while (cursor.moveToNext());
+                Message msg = new Message();
+                msg.what = MSG_CITY;
+                msg.arg1 = pos;
+                handler.sendMessage(msg);
+
             }
-            gpsValue = listCityGps.get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        if (list == null || list.isEmpty() || gpsValue == null) return queryCitysByProvince(province);
-        return list;
+        }).start();
     }
 
 
@@ -483,11 +448,4 @@ public class GpsSetController {
         }
     }
 
-    public static String getStringFromCursor(Cursor cursor, String columnName) throws ColumnNotFoundException {
-        int columnIndex = cursor.getColumnIndex(columnName);
-        if (columnIndex == -1) {
-            throw new ColumnNotFoundException("Column '" + columnName + "' not found in cursor.");
-        }
-        return cursor.getString(columnIndex);
-    }
 }
