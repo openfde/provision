@@ -118,8 +118,6 @@ public class Utils {
             String jsonString = scanner.hasNext() ? scanner.next() : "";
 
             JSONArray chinaData = new JSONArray(jsonString);
-//            Uri uri = Uri.parse(Constant.REGION_URI + "/REGION_INFO");
-//            context.getContentResolver().delete(uri, null, null);
             BaseDataBase.getInstance(context).regionDao().deleteAll();
             int index = 0;
             for (int i = 0; i < chinaData.length(); i++) {
@@ -161,27 +159,8 @@ public class Utils {
                         regionInfo.setCreateDate(getCurDateTime());
                         regionInfo.setEditDate(getCurDateTime());
 
-
-//                        ContentValues values = new ContentValues();
-//                        values.put("COUNTRY_ID", countryId);
-//                        values.put("COUNTRY_NAME", countryName);
-//                        values.put("COUNTRY_NAME_EN", countryEnName);
-//
-//                        values.put("PROVINCE_ID", provinceId);
-//                        values.put("PROVINCE_NAME", provinceName);
-//                        values.put("PROVINCE_NAME_EN", provinceEnName);
-//
-//                        values.put("CITY_ID", cityId);
-//                        values.put("CITY_NAME", cityName);
-//                        values.put("CITY_NAME_EN", cityEnName);
-//                        values.put("GPS", gpsCoordinates);
-//
-//                        values.put("IS_DEL", "0");
-//                        values.put("CREATE_DATE", getCurDateTime());
-//                        values.put("EDIT_DATE", getCurDateTime());
                         BaseDataBase.getInstance(context).regionDao().insert(regionInfo);
                         Log.i("bella","parseGpsData......end");
-//                        context.getContentResolver().insert(uri, values);
                     }
                 }
             }

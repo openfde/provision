@@ -90,7 +90,6 @@ public class GpsSetController {
             switch (msg.what) {
                 case MSG_COURTY:
                     if (listCountrys != null) {
-                        Log.w(TAG, "bella listCountrys  = " + listCountrys.toString());
                         adapterCountry.notifyDataSetChanged();
                         txtCountry.setText(listCountrys.get(indexCountry));
                         if (listCountrys.size() > 0) {
@@ -106,8 +105,6 @@ public class GpsSetController {
                     txtCountry.setText(listCountrys.get(indexCountry));
 
                     if (listProvinces != null) {
-                        Log.w(TAG, "bella Provinces , indexProvince: " + indexProvince);
-                        Log.w(TAG, "bella listProvinces  = " + listProvinces.toString());
                         txtProvince.setText(listProvinces.get(indexProvince));
                         adapterProvince.notifyDataSetChanged();
                         queryCitysByProvince(listProvinces.get(0), 0);
@@ -122,8 +119,6 @@ public class GpsSetController {
                 case MSG_CITY:
                     txtProvince.setText(listProvinces.get(indexProvince));
                     if (listCitys != null) {
-                        Log.w(TAG, "bella city, indexCity: " + indexCity);
-                        Log.w(TAG, "bella listCitys  = " + listCitys.toString());
                         txtCity.setText(listCitys.get(indexCity));
                         adapterCity.notifyDataSetChanged();
                         gpsValue = listAddress.get(indexCity).getGps();
@@ -140,19 +135,10 @@ public class GpsSetController {
     };
 
     private void initView(View rootView) {
-//        imgSave = (ImageView) rootView.findViewById(R.id.imgSave);
         txtCountry = (TextView) rootView.findViewById(R.id.txtCountry);
         txtProvince = (TextView) rootView.findViewById(R.id.txtProvince);
         txtCity = (TextView) rootView.findViewById(R.id.txtCity);
-//        imgBack = (ImageView) rootView.findViewById(R.id.imgBack);
-        // imgSave.setColorFilter(R.color.blue, PorterDuff.Mode.SRC_IN);
 
-//        imgBack.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                activity.finish();
-//            }
-//        });
         txtCountry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,7 +233,6 @@ public class GpsSetController {
 
 
         String locationGps = Settings.Global.getString(context.getContentResolver(), "locationGps");
-//        LogTools.i("locationGps: " + locationGps);
         if (locationGps != null) {
             String[] arrLocationGps = locationGps.split("~");
             try {
@@ -331,7 +316,6 @@ public class GpsSetController {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Log.w(TAG, "bella listCountrys size = " + listCountrys.size());
 
                     Message msg = new Message();
                     msg.what = MSG_COURTY;
@@ -359,7 +343,6 @@ public class GpsSetController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Log.w(TAG, "bella listProvinces size = " + listProvinces.size());
 
                 Message msg = new Message();
                 msg.arg1 = pos;
@@ -381,7 +364,6 @@ public class GpsSetController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                Log.w(TAG, "bella listAddress size = " + listAddress.size());
 
                 if (listAddress != null) {
                     listCitys.addAll(listAddress.stream()
