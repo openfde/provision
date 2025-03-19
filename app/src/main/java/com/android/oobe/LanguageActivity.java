@@ -397,7 +397,7 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                 if (state >= CHOOSE_LANGUAGE && state <= CHOOSE_TIME) {
                     state++;
                     gotoFragment();
-                } else if (state == CHOOSE_APP && singleton.hasNetworkRequestBeenInitiated()) {//Provision end, Start launcher
+                } else if (state == CHOOSE_APP) {//Provision end, Start launcher
                     if (StringUtils.equals(mNextBtn.getText(), getString(R.string.done_button_text))) {
                         if (singleton.isNothingDownload()) {
                             finishSetUpWizard();
@@ -408,7 +408,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                         ((AppFragment) appFragment).gotoAppDownloadFragment();
                         mNextBtn.setText(getString(R.string.done_button_text));
                     }
-                }
+                }else{
+					 finishSetUpWizard();
+				}
             }
         });
         mReturn.setOnClickListener(new View.OnClickListener() {
