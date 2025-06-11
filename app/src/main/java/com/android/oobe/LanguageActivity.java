@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -159,6 +160,13 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         Intent intentBroadcast = new Intent("com.fde.SYSTEM_INIT_ACTION");
         intentBroadcast.setPackage("com.boringdroid.systemui");
         sendBroadcast(intentBroadcast);
+
+        String multWindow = Utils.getSystemProperty("persist.waydroid.multi_windows", "false");
+        Log.w(TAG,"multWindow: "+multWindow);
+        if ("true".equals(multWindow)) {
+            finishSetUpWizard();
+            return;
+        }
 
         Intent intentService = new Intent(this, DownloadService.class);
         startService(intentService);
@@ -408,9 +416,9 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
                         ((AppFragment) appFragment).gotoAppDownloadFragment();
                         mNextBtn.setText(getString(R.string.done_button_text));
                     }
-                }else{
-					 finishSetUpWizard();
-				}
+                } else {
+                    finishSetUpWizard();
+                }
             }
         });
         mReturn.setOnClickListener(new View.OnClickListener() {

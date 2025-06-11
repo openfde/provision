@@ -1,7 +1,6 @@
 package com.android.oobe;
 
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,7 +8,6 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
-import com.android.internal.util.CompatibleConfig;
 import com.android.oobe.application.model.RegionInfo;
 
 import org.json.JSONArray;
@@ -19,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -110,9 +109,31 @@ public class Utils {
         }
     }
 
+    public static String getSystemProperty(String key, String defaultValue) {
+        String value = defaultValue;
+        try {
+            Class<?> systemProperties = Class.forName("android.os.SystemProperties");
+            Method get = systemProperties.getMethod("get", String.class, String.class);
+            value = (String) get.invoke(null, key, defaultValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    public static void setSystemProperty(String key, String value) {
+        try {
+            Class<?> systemPropertiesClass = Class.forName("android.os.SystemProperties");
+            Method setMethod = systemPropertiesClass.getDeclaredMethod("set", String.class, String.class);
+            setMethod.invoke(null, key, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void parseGpsData(Context context) {
         try {
-            Log.i("bella","parseGpsData......start");
+            Log.i("bella", "parseGpsData......start");
             InputStream inputStream = context.getResources().openRawResource(R.raw.gps);
             Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
             String jsonString = scanner.hasNext() ? scanner.next() : "";
@@ -160,7 +181,7 @@ public class Utils {
                         regionInfo.setEditDate(getCurDateTime());
 
                         BaseDataBase.getInstance(context).regionDao().insert(regionInfo);
-                        Log.i("bella","parseGpsData......end");
+                        Log.i("bella", "parseGpsData......end");
                     }
                 }
             }
