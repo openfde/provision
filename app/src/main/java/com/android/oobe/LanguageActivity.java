@@ -161,25 +161,24 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
         intentBroadcast.setPackage("com.boringdroid.systemui");
         sendBroadcast(intentBroadcast);
 
+        Intent intentService = new Intent(this, DownloadService.class);
+        startService(intentService);
+        bindService(intentService, connection, Context.BIND_AUTO_CREATE);
+
+        EventBusUtils.register(this);
+
         String multWindow = Utils.getSystemProperty("persist.waydroid.multi_windows", "false");
-        Log.w(TAG,"multWindow: "+multWindow);
         if ("true".equals(multWindow)) {
             finishSetUpWizard();
             return;
         }
 
-        Intent intentService = new Intent(this, DownloadService.class);
-        startService(intentService);
-        bindService(intentService, connection, Context.BIND_AUTO_CREATE);
-
         fetchDataPeriodically(this);
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         DecorView decorView = (DecorView) getWindow().getDecorView();
         decorView.startFullScreenWindow();
 
-        EventBusUtils.register(this);
 
         setContentView(R.layout.activity_language);
         mLanguageTitle = findViewById(R.id.language_title);
@@ -210,10 +209,14 @@ public class LanguageActivity extends Activity implements LocalePickerWithRegion
 
     @Override
     protected void onDestroy() {
-        EventBusUtils.unregister(this);
-        Intent intentService = new Intent(this, DownloadService.class);
-        stopService(intentService);
-        unbindService(connection);
+        try {
+            EventBusUtils.unregister(this);
+            Intent intentService = new Intent(this, DownloadService.class);
+            stopService(intentService);
+            unbindService(connection);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
