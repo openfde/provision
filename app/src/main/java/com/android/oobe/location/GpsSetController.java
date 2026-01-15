@@ -406,12 +406,15 @@ public class GpsSetController {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull Holder holder, int position) {
+        public void onBindViewHolder(@NonNull Holder holder, final int position) {
             holder.txtName.setText(list.get(position));
             holder.rootView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    itemClick.setOnItemClick(position);
+					int pos = holder.getAdapterPosition();
+					if (pos == RecyclerView.NO_POSITION) return;
+
+					itemClick.setOnItemClick(pos);
                 }
             });
         }
