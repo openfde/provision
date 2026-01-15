@@ -43,9 +43,13 @@ public class LocationAdapter extends RecyclerView.Adapter<LocationAdapter.Holder
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                itemClick.setOnItemClick(position);
+				int pos = holder.getAdapterPosition();
+				if (pos == RecyclerView.NO_POSITION) return;
+
+				itemClick.setOnItemClick(pos);
             }
         });
+		
     }
 
     @Override

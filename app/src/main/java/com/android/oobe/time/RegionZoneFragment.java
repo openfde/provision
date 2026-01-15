@@ -87,10 +87,13 @@ public class RegionZoneFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TimeZoneProvider.saveTimeZone(getContext(), mRegionZoneInfoList.get(position).getId());
-                    mLanguageListener.backToTime();
-                }
-            });
+					int pos = holder.getAdapterPosition();
+					if (pos == RecyclerView.NO_POSITION) return;
+
+					TimeZoneProvider.saveTimeZone(getContext(),mRegionZoneInfoList.get(pos).getId());
+					mLanguageListener.backToTime();
+				}
+			});
         }
 
         @Override
